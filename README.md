@@ -1,6 +1,2 @@
 # Th06MierVos
-'Themaopdracht 6 
-Matthijs Vos & Marianne Delmaar
-Hogeschool Utrecht
-in opdracht van :
-Marten Wensink
+Google Drive : https://drive.google.com/drive/u/0/folders/0ByJvba2pSprTYy1jcU1zbWpwSWM
