@@ -1,5 +1,5 @@
 #include "TempSensor.h"
-#include <stdlib> //ToDo remove when rand() is removed
+#include <stdlib.h> //ToDo remove when rand() is removed
 
 TempSensor::TempSensor(const char reqByte) : m_reqByte(reqByte) 
 {}
@@ -16,7 +16,7 @@ void TempSensor::updateState()
     m_listener->updateTemp(this);
 }
 
-void TempSensor::setListener(const TempListener *l)
+void TempSensor::setListener(TempListener *l)
 {
     m_listener = l;
 }

@@ -7,6 +7,6 @@ class WaterLvlListener
 {
 public:
     virtual void updateWLevel(WaterLevelSensor *wls) = 0;
-}
+};
 
 #endif

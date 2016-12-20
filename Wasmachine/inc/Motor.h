@@ -1,6 +1,8 @@
 #ifndef __Motor
 #define __Motor
 
+#include <sys/types.h>
+
 class Motor
 {
 private:
@@ -8,7 +10,7 @@ private:
     
 public:
     Motor(const char startByte);
-    setRPM(const uint RPM);
-}
+    void setRPM(const uint RPM);
+};
 
 #endif

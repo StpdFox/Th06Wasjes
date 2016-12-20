@@ -2,65 +2,105 @@
 #include "PassiveIOHandler.h"
 
 PassiveIOHandler::PassiveIOHandler(const uint prio) : 
-    task(prio, "PassIOHandler")
-{}
-
-PassiveIOHandler::lockDoor() const
+    task(prio, "PassIOHandler"),
+    m_doorLock(DefaultOutput(2, 64, 128)),
+    m_heater(DefaultOutput(7, 16, 32)),
+    m_waterValve(DefaultOutput(3, 16, 32)),
+    m_signalLed(DefaultOutput(11, 16, 32)),
+    m_pump(DefaultOutput(5, 16, 32)),
+    m_motor(Motor(10)),
+    m_doorLockFlag(this, "DoorLockFlag"),
+    m_doorUnlockFlag(this, "DoorUnLockFlag"),
+    m_heaterOnFlag(this, "HeaterOnFlag"),
+    m_heaterOffFlag(this, "HeaterOffFlag"),
+    m_waterValveOpenFlag(this, "WaterValveOpenFlag"),
+    m_waterValveCloseFlag(this, "WaterValveCloseFlag"),
+    m_signalLedOnFlag(this, "SignalLedOnFlag"),
+    m_signalLedOffFlag(this, "SignalLedOffFlag"),
+    m_pumpOnFlag(this, "PumpOnFlag"),
+    m_pumpOffFlag(this, "PumpOffFlag"),
+    m_newRPMFlag(this, "NewRPMFlag"),
+    m_motorRPMPool("MotorRPMPool")
 {
-    std::cout << "Lock door" << std::endl;
+//    m_doorLock = DefaultOutput(2, 64, 128);
+//    m_heater = DefaultOutput(7, 16, 32);
+//    m_waterValve = DefaultOutput(3, 16, 32);
+//    m_signalLed = DefaultOutput(11, 16, 32);
+//    m_pump = DefaultOutput(5, 16, 32);
+//    m_motor = Motor(10);
 }
 
-PassiveIOHandler::unlockDoor() const
+void PassiveIOHandler::lockDoor()
 {
-    std::cout << "Unlock door" << std::endl;
+   set(m_doorLockFlag);
 }
 
-PassiveIOHandler::heaterOn() const
+void PassiveIOHandler::unlockDoor()
 {
-    std::cout << "Heater on" << std::endl;
+    set(m_doorUnlockFlag);
 }
 
-PassiveIOHandler::heaterOff() const
+void PassiveIOHandler::heaterOn()
 {
-    std::cout << "Heater off" << std::endl;
+    set(m_heaterOnFlag);
 }
 
-PassiveIOHandler::openWaterValve() const
+void PassiveIOHandler::heaterOff()
 {
-    std::cout << "Open water valve" << std::endl;
+    set(m_heaterOffFlag);
 }
 
-PassiveIOHandler::closeWaterValve() const
+void PassiveIOHandler::openWaterValve()
 {
-    std::cout << "Close water valve" << std::endl;
+    set(m_waterValveOpenFlag);
 }
 
-PassiveIOHandler::signalLedOn() const
+void PassiveIOHandler::closeWaterValve()
 {
-    std::cout << "Signal led on" << std::endl;
+    set(m_waterValveCloseFlag);
 }
 
-PassiveIOHandler::signalLedOff() const
+void PassiveIOHandler::signalLedOn()
 {
-    std::cout << "Signal led off" << std::endl;
+    set(m_signalLedOnFlag);
 }
 
-PassiveIOHandler::setMotoRPM(uint RPM) const
+void PassiveIOHandler::signalLedOff()
 {
-    std::cout << "New RPM: " << RPM << std::endl;
+    set(m_signalLedOffFlag);
 }
 
-PassiveIOHandler::pumpOn() const
+void PassiveIOHandler::setMotoRPM(const int RPM)
 {
-    std::cout << "Pump on: " << std::endl;
+    m_motorRPMPool.write(RPM);
+    set(m_newRPMFlag);
 }
 
-PassiveIOHandler::pumpOff() const
+void PassiveIOHandler::pumpOn()
 {
-    std::cout << "Pump off: " << std::endl;
+    set(m_pumpOnFlag);
 }
 
-PassiveIOHandler::main()
+void PassiveIOHandler::pumpOff()
 {
-    
+    set(m_pumpOffFlag);
+}
+
+void PassiveIOHandler::main()
+{
+    while(true)
+    {
+        if(wait() == m_doorLockFlag)        std::cout << "Door locked" << std::endl;
+        if(wait() == m_doorUnlockFlag)      std::cout << "Door unlocked" << std::endl;
+        if(wait() == m_heaterOnFlag)        std::cout << "Heater on" << std::endl;
+        if(wait() == m_heaterOffFlag)       std::cout << "Heater off" << std::endl;
+        if(wait() == m_waterValveOpenFlag)  std::cout << "Water valve open" << std::endl;
+        if(wait() == m_waterValveCloseFlag) std::cout << "Water valve closed" << std::endl;
+        if(wait() == m_signalLedOnFlag)     std::cout << "Signal led on" << std::endl;
+        if(wait() == m_signalLedOffFlag)    std::cout << "Signal led off" << std::endl;
+        if(wait() == m_newRPMFlag)          std::cout << "Set motor on: " << m_motorRPMPool.read() << " RPM" << std::endl;
+        if(wait() == m_pumpOnFlag)          std::cout << "Pump on" << std::endl;
+        if(wait() == m_pumpOffFlag)         std::cout << "Pump off" << std::endl;
+        suspend();
+    }
 }

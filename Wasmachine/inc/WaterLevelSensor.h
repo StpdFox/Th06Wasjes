@@ -3,6 +3,7 @@
 
 #include "EventSource.h"
 #include "WaterLvlListener.h"
+#include <sys/types.h>
 
 class WaterLevelSensor : public EventSource
 {
@@ -14,10 +15,10 @@ private:
     void readWaterLevel();
     
 public:
-    WaterLevelSensor(const char reqByte)
+    WaterLevelSensor(const char reqByte);
     void updateState();
-    void setListener(const WaterLvlListener *wLL);
-    void getWaterLevel() const;
-}
+    void setListener(WaterLvlListener *wLL);
+    uint getWaterLevel() const;
+};
 
 #endif

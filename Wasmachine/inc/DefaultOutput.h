@@ -12,6 +12,6 @@ public:
     DefaultOutput(const char startByte, const char onByte, const char offByte);
     void on() const;
     void off() const;
-}
+};
 
 #endif

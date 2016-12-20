@@ -3,6 +3,7 @@
 
 #include "TempListener.h"
 #include "EventSource.h"
+#include <sys/types.h>
 
 class TempSensor : public EventSource
 {
@@ -16,8 +17,8 @@ private:
 public:
     TempSensor(const char reqByte);
     void updateState();
-    void setListener(const TempListener *tl);
+    void setListener(TempListener *tl);
     uint getTemp() const;
-}
+};
 
 #endif

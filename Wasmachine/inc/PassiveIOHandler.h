@@ -2,11 +2,13 @@
 #define __PassiveIOHandler
 
 #include "pRTOS.h"
+#include "DefaultOutput.h"
+#include "Motor.h"
 
 class PassiveIOHandler : public RTOS::task
 {
 private:
-    RTOS::flag m_doorlockFlag;
+    RTOS::flag m_doorLockFlag;
     RTOS::flag m_doorUnlockFlag;
     RTOS::flag m_heaterOnFlag;
     RTOS::flag m_heaterOffFlag;
@@ -17,30 +19,30 @@ private:
     RTOS::flag m_pumpOnFlag;
     RTOS::flag m_pumpOffFlag;
     RTOS::flag m_newRPMFlag;
-    RTOS::pool m_motorRPMPool;
+    RTOS::pool<int> m_motorRPMPool;
     
-    DefaultOutput m_doorLock(2, 64, 128);
-    DefaultOutput m_heater(7, 16, 32);
-    DefaultOutput m_waterValve(3, 16, 32);
-    DefaultOutput m_signalLed(11, 16, 32);
-    DefaultOutput m_pump(5, 16, 32);
-    Motor m_motor(10);
+    DefaultOutput m_doorLock;
+    DefaultOutput m_heater;
+    DefaultOutput m_waterValve;
+    DefaultOutput m_signalLed;
+    DefaultOutput m_pump;
+    Motor m_motor;
     
-    void main();
+    void main(void);
 public:
     PassiveIOHandler(const uint prio);
     
-    void lockDoor() const;
-    void unlockDoor() const;
-    void heaterOn() const;
-    void heaterOff() const;
-    void openWaterValve() const;
-    void closeWaterValve() const;
-    void signalLedOn() const;
-    void signalLedOff() const;
-    void setMotoRPM() const;
-    void pumpOn() const;
-    void pumpOff() const;    
-}
+    void lockDoor();
+    void unlockDoor();
+    void heaterOn();
+    void heaterOff();
+    void openWaterValve();
+    void closeWaterValve();
+    void signalLedOn();
+    void signalLedOff();
+    void setMotoRPM(const int RPM);
+    void pumpOn();
+    void pumpOff();    
+};
 
 #endif

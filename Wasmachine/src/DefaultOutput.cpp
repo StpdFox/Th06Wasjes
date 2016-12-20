@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "DefaultOutput.h"
 
 DefaultOutput::DefaultOutput(const char startByte, const char onByte, const char offByte) :
@@ -6,12 +8,12 @@ DefaultOutput::DefaultOutput(const char startByte, const char onByte, const char
     m_offByte(offByte)
 {}
 
-DefaultOutput::on() const
+void DefaultOutput::on() const
 {
-    //Send on message
+    std::cout << "On" << std::endl;
 }
 
-DefaultOutput::off() const
+void DefaultOutput::off() const
 {
-    //Send off message
+    std::cout << "Off" << std::endl;
 }
