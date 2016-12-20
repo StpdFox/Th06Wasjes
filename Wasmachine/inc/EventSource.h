@@ -4,7 +4,7 @@
 class EventSource
 {
 public:
-    virtual void updateState() = 0;
+    virtual void updateState(void) = 0;
 };
 
 #endif

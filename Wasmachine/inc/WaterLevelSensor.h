@@ -9,7 +9,7 @@ class WaterLevelSensor : public EventSource
 {
 private:
     char m_requestByte;
-    uint m_waterLevel;
+    uint m_waterLevel = 0;
     WaterLvlListener *m_wlvlListeners;
     
     void readWaterLevel();

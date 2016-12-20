@@ -9,7 +9,7 @@ class TempSensor : public EventSource
 {
 private:
     char m_reqByte;
-    uint m_temp;
+    uint m_temp = 0;
     TempListener *m_listener;
     
     void readTemp();

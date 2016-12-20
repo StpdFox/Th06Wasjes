@@ -21,14 +21,7 @@ PassiveIOHandler::PassiveIOHandler(const uint prio) :
     m_pumpOffFlag(this, "PumpOffFlag"),
     m_newRPMFlag(this, "NewRPMFlag"),
     m_motorRPMPool("MotorRPMPool")
-{
-//    m_doorLock = DefaultOutput(2, 64, 128);
-//    m_heater = DefaultOutput(7, 16, 32);
-//    m_waterValve = DefaultOutput(3, 16, 32);
-//    m_signalLed = DefaultOutput(11, 16, 32);
-//    m_pump = DefaultOutput(5, 16, 32);
-//    m_motor = Motor(10);
-}
+{}
 
 void PassiveIOHandler::lockDoor()
 {
@@ -52,6 +45,7 @@ void PassiveIOHandler::heaterOff()
 
 void PassiveIOHandler::openWaterValve()
 {
+    std::cout << "set flag" << std::endl;
     set(m_waterValveOpenFlag);
 }
 
@@ -86,7 +80,7 @@ void PassiveIOHandler::pumpOff()
     set(m_pumpOffFlag);
 }
 
-void PassiveIOHandler::main()
+void PassiveIOHandler::main(void)
 {
     while(true)
     {
@@ -101,6 +95,6 @@ void PassiveIOHandler::main()
         if(wait() == m_newRPMFlag)          std::cout << "Set motor on: " << m_motorRPMPool.read() << " RPM" << std::endl;
         if(wait() == m_pumpOnFlag)          std::cout << "Pump on" << std::endl;
         if(wait() == m_pumpOffFlag)         std::cout << "Pump off" << std::endl;
-        suspend();
+        std::cout << "passive" << std::endl;
     }
 }

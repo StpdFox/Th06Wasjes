@@ -7,7 +7,8 @@ WaterLevelSensor::WaterLevelSensor(const char reqByte) : m_requestByte(reqByte)
 void WaterLevelSensor::readWaterLevel()
 {
     //ToDo put here the sensor read code
-    m_waterLevel = rand() % 15;
+    //m_waterLevel = rand() % 15;
+    ++m_waterLevel;
 }
 
 void WaterLevelSensor::updateState()

@@ -7,7 +7,8 @@ TempSensor::TempSensor(const char reqByte) : m_reqByte(reqByte)
 void TempSensor::readTemp()
 {
     //ToDo put here the sensor read code
-    m_temp = rand() % 100;
+    //m_temp = rand() % 100;
+    ++m_temp;
 }
 
 void TempSensor::updateState()
