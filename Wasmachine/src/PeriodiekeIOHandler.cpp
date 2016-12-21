@@ -27,8 +27,10 @@ void PeriodiekeIOHandler::main()
     while(true)
     {
         wait(m_clock);
-        if(wait() == m_startFlag) m_status = true;
-        if(wait() == m_stopFlag) m_status = false;
+//        std::cerr << "clock" << std::endl;
+//        if(wait() == m_startFlag) m_status = true;
+//        if(wait() == m_stopFlag) m_status = false;
+//        std::cerr << "waitafter" << std::endl;
         
         if(m_status)
         {

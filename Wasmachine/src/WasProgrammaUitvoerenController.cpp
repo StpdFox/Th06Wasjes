@@ -35,24 +35,25 @@ void WasProgrammaUitvoerenController::phaseTimeOver()
 
 void WasProgrammaUitvoerenController::checkWasMachine()
 {
-    std::cout << "in check" << std::endl;
-    if(m_currentPhase.phase = SPOELEN)
+    //std::cout << "in check" << std::endl;
+    if((m_currentPhase.phase = SPOELEN))
     {
-        
+
     }
-    else if(m_currentPhase.phase = WASSEN)
+    else if((m_currentPhase.phase = WASSEN))
     {
-        std::cout << "in wassen" << std::endl;
+        //std::cout << "in wassen" << std::endl;
         //m_wPUH.setPhaseTimer(60000);
-        std::cout << "wlvl: " << m_wLevel << std::endl;
+        //std::cout << "wlvl: " << m_wLevel << std::endl;
         if(m_wLevel < m_targetWLevel) 
         {
             if(!m_waterValveOpen)
             {
-                std::cout << "set valve open" << std::endl;
-                m_pIOHandler.lockDoor();
+                //std::cout << "set valve open" << std::endl;
+                //m_pIOHandler.lockDoor();
                 m_pIOHandler.openWaterValve();
                 m_waterValveOpen = true;
+                //m_pIOHandler.resume();
             }
         }
         else
@@ -61,15 +62,17 @@ void WasProgrammaUitvoerenController::checkWasMachine()
             {
                 m_pIOHandler.closeWaterValve();
                 m_waterValveOpen = false;
+                //m_pIOHandler.resume();
             }
             
-            std::cout << "currenttemp: " << m_currentTemp << std::endl;
+            //std::cout << "currenttemp: " << m_currentTemp << std::endl;
             if(m_currentPhase.temp > m_currentTemp) 
             {
                 if(!m_heaterOn)
                 {
                     m_pIOHandler.heaterOn();
                     m_heaterOn = true;
+                    //m_pIOHandler.resume();
                 }
             }
             else                                    
@@ -78,22 +81,25 @@ void WasProgrammaUitvoerenController::checkWasMachine()
                 {
                     m_pIOHandler.heaterOff();
                     m_heaterOn = false;
+                    //m_pIOHandler.resume();
                 }
                 
                 if(m_moterLeft)
                 {
                     m_moterLeft = false;
                     m_pIOHandler.setMotoRPM(10);
+                    //m_pIOHandler.resume();
                 }
                 else
                 {
                     m_moterLeft = true;
                     m_pIOHandler.setMotoRPM(-10);
+                    //m_pIOHandler.resume();
                 }
             }
         }
     }
-    else if(m_currentPhase.phase = CENTRIFUGEREN)
+    else if((m_currentPhase.phase = CENTRIFUGEREN))
     {
         
     }

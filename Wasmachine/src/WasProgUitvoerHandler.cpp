@@ -6,26 +6,30 @@ WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSe
     m_waterLvlSensor(waterLvlSensor),
     //m_webSocked = webSocked,
     m_pasHandler(pasHandler),
+    m_wUC(m_pasHandler, *this),
     m_newTempFlag(this, "NewTempFlag"),
     m_newWLvlFlag(this, "newWLvlFlag"),
     m_tempPool("TempPool"),
     m_wLvlPool("WlvlPool"),
     m_wasPhase("WasPhase"),
     m_cancelTimer(this, "CancelTimer"),
-    m_phaseTimer(this, "PhaseTimer"),
-    m_wUC(m_pasHandler, *this)
-{}
+    m_phaseTimer(this, "PhaseTimer")
+{
+    std::cout << "PassiveIOHandler adress: " << &m_pasHandler << std::endl;
+}
 
 void WasProgUitvoerHandler::updateTemp(TempSensor *ts)
 {
-    m_temp = ts->getTemp();
-    std::cout << "temp: " << m_temp << std::endl;
-    set(m_newTempFlag);
+    m_tempPool.write(ts->getTemp());
+    //m_temp = ts->getTemp();
+    //std::cout << "temp: " << m_temp << std::endl;
+    //set(m_newTempFlag);
 }
 
 void WasProgUitvoerHandler::updateWLevel(WaterLevelSensor *lvl)
 {
-    m_waterLvl = lvl->getWaterLevel();
+    m_wLvlPool.write(lvl->getWaterLevel());
+    //m_waterLvl = lvl->getWaterLevel();
     set(m_newWLvlFlag);
 }
 
@@ -60,26 +64,41 @@ void WasProgUitvoerHandler::main(void)
     m_waterLvlSensor.setListener(this);
     while(true)
     {
-        if(wait() == m_newTempFlag) m_wUC.setNewTemp(m_temp);
-        if(wait() == m_newWLvlFlag) m_wUC.setNewWLvl(m_waterLvl);
-        if(wait() == m_cancelTimer) 
-            {
-                m_wUC.cancelTimeOver();
-                std::cout << "cancel over time" << std::endl;
-            }
-        if(wait() == m_phaseTimer)
-        {
-            std::cout << "phase time cancle" << std::endl;
-            m_wUC.phaseTimeOver();
-        }
-        m_wUC.checkWasMachine();
-        
-        
-        
-//        if(wait() == m_wasPhase)
+//        if(wait() == m_newTempFlag) 
 //        {
-//            m_wUC.setNewPhase(m_wasPhase.read());
+//            m_wUC.setNewTemp(m_temp);
+//            m_wUC.checkWasMachine();
+//            m_pasHandler.resume();
 //        }
-        //suspend();
+        
+        
+        if(wait() == m_newWLvlFlag)
+        {
+            m_waterLvl = m_wLvlPool.read();
+            m_wUC.setNewWLvl(m_waterLvl);
+            m_wUC.checkWasMachine();
+            //m_pasHandler.resume();
+        }
+        
+        //std::cout << "afterflag" << std::endl;
+        
+        sleep(500);
+
+//        if(wait() == m_cancelTimer) 
+//        {
+//                m_wUC.cancelTimeOver();
+//                std::cout << "cancel over time" << std::endl;
+//        }
+//
+//        if(wait() == m_phaseTimer)
+//        {
+//            std::cout << "phase time cancle" << std::endl;
+//            m_wUC.phaseTimeOver();
+//        }
+
+        //m_pasHandler.resume();
+        //std::cout << "sleep" << std::endl;
+        //sleep(5000);
+        //std::cout << "done checking" << std::endl;
     }
 }
