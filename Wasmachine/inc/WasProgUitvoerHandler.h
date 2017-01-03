@@ -23,16 +23,16 @@ private:
     //StatusTonenController m_sTC;
     WasProgrammaUitvoerenController m_wUC;
     
-    RTOS::flag m_newTempFlag;
-    RTOS::flag m_newWLvlFlag;
+    RTOS::flag m_newValueFlag;
+    RTOS::flag m_newPhaseFlag;
     RTOS::pool<uint> m_tempPool;
     RTOS::pool<uint> m_wLvlPool;
     RTOS::mailbox<WasProgramPhase> m_wasPhase;
     RTOS::timer m_cancelTimer;
     RTOS::timer m_phaseTimer;
     
-    uint m_temp;
-    uint m_waterLvl;
+    uint m_temp = 0;
+    uint m_waterLvl = 0;
     
     void main(void);
 public:

@@ -5,6 +5,7 @@
 
 enum Phase
 {
+	NONE,
     SPOELEN,
     WASSEN,
     CENTRIFUGEREN

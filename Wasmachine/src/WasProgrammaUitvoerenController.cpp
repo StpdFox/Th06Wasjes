@@ -1,11 +1,13 @@
 #include "WasProgrammaUitvoerenController.h"
+#include "PassiveIOMessage.h"
+#include <stdlib.h>
 
 WasProgrammaUitvoerenController::WasProgrammaUitvoerenController(PassiveIOHandler &pasIOHandler, WasProgUitvoerHandler &wPUH):
-    m_pIOHandler(pasIOHandler),
+    m_pasIOHandler(pasIOHandler),
     m_wPUH(wPUH)
 {
-    m_currentPhase.phase = WASSEN;
-    m_currentPhase.temp = 50;
+    m_currentPhase.phase = NONE;
+    m_currentPhase.temp;
 }
 
 void WasProgrammaUitvoerenController::setNewPhase(const WasProgramPhase &wProgPhase)
@@ -35,68 +37,93 @@ void WasProgrammaUitvoerenController::phaseTimeOver()
 
 void WasProgrammaUitvoerenController::checkWasMachine()
 {
-    //std::cout << "in check" << std::endl;
+    PassiveIOMessage message;
+    bool newMessage = false;
+    if((m_currentPhase.phase = NONE))
+    {
+//    	if(!m_perIOHandSuspend)
+//    	{
+//			m_pasIOHandler.suspend();
+//			m_perIOHandSuspend = true;
+//    	}
+    }
+
     if((m_currentPhase.phase = SPOELEN))
     {
-
+//    	if(m_perIOHandSuspend)
+//    	{
+//    		m_pasIOHandler
+//    	}
     }
     else if((m_currentPhase.phase = WASSEN))
     {
-        //std::cout << "in wassen" << std::endl;
-        //m_wPUH.setPhaseTimer(60000);
-        //std::cout << "wlvl: " << m_wLevel << std::endl;
         if(m_wLevel < m_targetWLevel) 
         {
             if(!m_waterValveOpen)
             {
-                //std::cout << "set valve open" << std::endl;
-                //m_pIOHandler.lockDoor();
-                m_pIOHandler.openWaterValve();
+                message.waterValve = 1;
+                newMessage = true;
                 m_waterValveOpen = true;
-                //m_pIOHandler.resume();
             }
         }
         else
         {
             if(m_waterValveOpen)
             {
-                m_pIOHandler.closeWaterValve();
+                message.waterValve = 0;
+                newMessage = true;
                 m_waterValveOpen = false;
-                //m_pIOHandler.resume();
             }
             
-            //std::cout << "currenttemp: " << m_currentTemp << std::endl;
-            if(m_currentPhase.temp > m_currentTemp) 
+            if(m_currentTemp < m_currentPhase.temp) 
             {
                 if(!m_heaterOn)
                 {
-                    m_pIOHandler.heaterOn();
+                    message.heater = 1;
+                    newMessage = true;
                     m_heaterOn = true;
-                    //m_pIOHandler.resume();
                 }
             }
             else                                    
             {
                 if(m_heaterOn)
                 {
-                    m_pIOHandler.heaterOff();
+                    std::cout << "heater off set" << std::endl;
+                    message.heater = 0;
+                    newMessage = true;
                     m_heaterOn = false;
-                    //m_pIOHandler.resume();
-                }
-                
-                if(m_moterLeft)
-                {
-                    m_moterLeft = false;
-                    m_pIOHandler.setMotoRPM(10);
-                    //m_pIOHandler.resume();
                 }
                 else
                 {
-                    m_moterLeft = true;
-                    m_pIOHandler.setMotoRPM(-10);
-                    //m_pIOHandler.resume();
+                    message.motorRPM = rand() % 1000;
+                    newMessage = true;
                 }
+//                if(m_moterLeft)
+//                {
+//                    std::cout << "set new rpm left" << std::endl;
+//                    m_moterLeft = false;
+//                    message.motorRPM = 10;
+//                    newMessage = true;
+//                }
+//                else
+//                {
+//                    std::cout << "set new rpm right" << std::endl;
+//                    m_moterLeft = true;
+//                    message.motorRPM = -10;
+//                    newMessage = true;
+//                }
+//                std::cout << "out of" << std::endl;
             }
+        }
+
+        if(newMessage)
+        {
+            m_pasIOHandler.newMessage(message);
+            //std::cout << "sleep " << std::endl;
+            //sleep(1);
+           // std::cout << "done sleping" << std::endl;
+            m_pasIOHandler.setMessageFlag();
+            
         }
     }
     else if((m_currentPhase.phase = CENTRIFUGEREN))

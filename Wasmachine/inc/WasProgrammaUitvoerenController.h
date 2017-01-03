@@ -7,7 +7,7 @@ class WasProgUitvoerHandler;
 class WasProgrammaUitvoerenController
 {
 private:
-    PassiveIOHandler &m_pIOHandler;
+    PassiveIOHandler &m_pasIOHandler;
     WasProgUitvoerHandler &m_wPUH;
     
     WasProgramPhase m_currentPhase;
@@ -20,6 +20,8 @@ private:
     bool m_heaterOn = false;
     bool m_waterValveOpen = false;
     
+    //bool m_perIOHandSuspend = true;
+
 public:
     WasProgrammaUitvoerenController(PassiveIOHandler &pIOHandler, WasProgUitvoerHandler &wPUH);
     void setNewPhase(const WasProgramPhase &wProgPhase);

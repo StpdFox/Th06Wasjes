@@ -7,8 +7,8 @@ WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSe
     //m_webSocked = webSocked,
     m_pasHandler(pasHandler),
     m_wUC(m_pasHandler, *this),
-    m_newTempFlag(this, "NewTempFlag"),
-    m_newWLvlFlag(this, "newWLvlFlag"),
+    m_newValueFlag(this, "NewTempFlag"),
+	m_newPhaseFlag(this, "newPhaseFlag"),
     m_tempPool("TempPool"),
     m_wLvlPool("WlvlPool"),
     m_wasPhase("WasPhase"),
@@ -21,21 +21,19 @@ WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSe
 void WasProgUitvoerHandler::updateTemp(TempSensor *ts)
 {
     m_tempPool.write(ts->getTemp());
-    //m_temp = ts->getTemp();
-    //std::cout << "temp: " << m_temp << std::endl;
-    //set(m_newTempFlag);
+    //m_newValueFlag.set();
 }
 
 void WasProgUitvoerHandler::updateWLevel(WaterLevelSensor *lvl)
 {
     m_wLvlPool.write(lvl->getWaterLevel());
-    //m_waterLvl = lvl->getWaterLevel();
-    set(m_newWLvlFlag);
+    m_newValueFlag.set();
 }
 
 void WasProgUitvoerHandler::setWProgPhase(const WasProgramPhase &wPhase)
 {
     m_wasPhase.write(wPhase);
+    m_newPhaseFlag.set();
 }
 
 void WasProgUitvoerHandler::setCancelTimer(const uint time)
@@ -64,41 +62,18 @@ void WasProgUitvoerHandler::main(void)
     m_waterLvlSensor.setListener(this);
     while(true)
     {
-//        if(wait() == m_newTempFlag) 
-//        {
-//            m_wUC.setNewTemp(m_temp);
-//            m_wUC.checkWasMachine();
-//            m_pasHandler.resume();
-//        }
-        
-        
-        if(wait() == m_newWLvlFlag)
+        if(wait() == m_newValueFlag)
         {
-            m_waterLvl = m_wLvlPool.read();
-            m_wUC.setNewWLvl(m_waterLvl);
-            m_wUC.checkWasMachine();
-            //m_pasHandler.resume();
+			m_temp = m_tempPool.read();
+			m_waterLvl = m_wLvlPool.read();
+			m_wUC.setNewTemp(m_temp);
+			m_wUC.setNewWLvl(m_waterLvl);
+			m_wUC.checkWasMachine();
         }
-        
-        //std::cout << "afterflag" << std::endl;
-        
-        sleep(500);
 
-//        if(wait() == m_cancelTimer) 
-//        {
-//                m_wUC.cancelTimeOver();
-//                std::cout << "cancel over time" << std::endl;
-//        }
-//
-//        if(wait() == m_phaseTimer)
-//        {
-//            std::cout << "phase time cancle" << std::endl;
-//            m_wUC.phaseTimeOver();
-//        }
-
-        //m_pasHandler.resume();
-        //std::cout << "sleep" << std::endl;
-        //sleep(5000);
-        //std::cout << "done checking" << std::endl;
+        if(wait() == m_newPhaseFlag)
+        {
+        	m_wUC.setNewPhase(m_wasPhase.read());
+        }
     }
 }
