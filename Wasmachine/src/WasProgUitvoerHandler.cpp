@@ -4,7 +4,6 @@ WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSe
     task(prio, "WasProgUitvoerHandler"),
     m_tempSensor(tempSensor),
     m_waterLvlSensor(waterLvlSensor),
-    //m_webSocked = webSocked,
     m_pasHandler(pasHandler),
     m_wUC(m_pasHandler, *this),
     m_newValueFlag(this, "NewTempFlag"),
@@ -36,32 +35,13 @@ void WasProgUitvoerHandler::setWProgPhase(const WasProgramPhase &wPhase)
     m_newPhaseFlag.set();
 }
 
-void WasProgUitvoerHandler::setCancelTimer(const uint time)
-{
-    m_cancelTimer.set(time);
-}
-
-void WasProgUitvoerHandler::setPhaseTimer(const uint time)
-{
-    m_phaseTimer.set(time);
-}
-
-void WasProgUitvoerHandler::cancelCancelTimer()
-{
-    m_cancelTimer.cancel();
-}
-
-void WasProgUitvoerHandler::cancelPhaseTimer()
-{
-    m_phaseTimer.cancel();
-}
-
 void WasProgUitvoerHandler::main(void)
 {
     m_tempSensor.setListener(this);
     m_waterLvlSensor.setListener(this);
     while(true)
     {
+        //This will not work because it's not posible to wait on 2 or more flags only 1!!!
         if(wait() == m_newValueFlag)
         {
 			m_temp = m_tempPool.read();

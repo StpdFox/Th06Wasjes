@@ -8,22 +8,19 @@
 #ifndef INC_WEBSOCKET_H_
 #define INC_WEBSOCKET_H_
 
+#include <sys/types.h>
+
 #include "pRTOS.h"
+#include "WasProBehCntr.h"
 
 class WebSocket : public RTOS::task
 {
 private:
-	RTOS::flag m_updateSiteFlag;
-	RTOS::pool m_wasProgsPool;
-	RTOS::pool m_statusWasmachinePool;
-	RTOS::pool m_statusBeheerPool;
-
+	WasProBehCntr &m_wbc;
 	void main(void);
 
 public:
-	WebSocket(const uint prio);
-
-
+	WebSocket(const uint prio, WasProBehCntr &wbc);
 };
 
 

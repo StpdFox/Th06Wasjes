@@ -6,7 +6,6 @@
 #include "TempListener.h"
 #include "WaterLevelSensor.h"
 #include "WaterLvlListener.h"
-//#include "WebSocked.h"
 //#include "StatusTonenController.h"
 #include "WasProgrammaUitvoerenController.h"
 #include "WasProgramPhase.h"
@@ -17,7 +16,6 @@ class WasProgUitvoerHandler : public RTOS::task, public TempListener, public Wat
 private:
     TempSensor &m_tempSensor;
     WaterLevelSensor &m_waterLvlSensor;
-    //WebSocked &m_webSocked;
     PassiveIOHandler &m_pasHandler;
     
     //StatusTonenController m_sTC;
@@ -28,11 +26,6 @@ private:
     RTOS::pool<uint> m_tempPool;
     RTOS::pool<uint> m_wLvlPool;
     RTOS::mailbox<WasProgramPhase> m_wasPhase;
-    RTOS::timer m_cancelTimer;
-    RTOS::timer m_phaseTimer;
-    
-    uint m_temp = 0;
-    uint m_waterLvl = 0;
     
     void main(void);
 public:
@@ -40,10 +33,6 @@ public:
     void updateTemp(TempSensor *ts);
     void updateWLevel(WaterLevelSensor *lvl);
     void setWProgPhase(const WasProgramPhase &wPhase);
-    void setCancelTimer(const uint time);
-    void setPhaseTimer(const uint time);
-    void cancelCancelTimer();
-    void cancelPhaseTimer();
 };
 
 #endif

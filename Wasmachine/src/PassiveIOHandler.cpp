@@ -13,14 +13,10 @@ PassiveIOHandler::PassiveIOHandler(const uint prio) :
     m_motor(Motor(10))
 {}
 
-void PassiveIOHandler::setMessageFlag()
-{
-    m_newActionFlag.set();
-}
-
 void PassiveIOHandler::newMessage(const PassiveIOMessage &message)
 {
     m_messagePool.write(message);
+    m_newActionFlag.set();
 }
 
 void PassiveIOHandler::main(void)

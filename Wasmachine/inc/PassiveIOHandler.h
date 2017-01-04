@@ -22,8 +22,6 @@ private:
     void main(void);
 public:
     PassiveIOHandler(const uint prio);
-    
-    void setMessageFlag();
     void newMessage(const PassiveIOMessage &message);
 };
 
