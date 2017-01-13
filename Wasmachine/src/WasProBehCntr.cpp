@@ -7,6 +7,7 @@
 
 #include "WasProBehCntr.h"
 #include "WasProgramPhase.h"
+#include "WasProgXml.h"
 
 WasProBehCntr::WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh) :
 	RTOS::task(prio, "wbc"),
@@ -14,7 +15,9 @@ WasProBehCntr::WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh) :
 	m_mailFlag(this, "MailFlag"),
 	m_startWProg("StartWProgMailBox"),
 	m_phaseTimer(this, "PhaseTimer")
-{}
+{
+	WasProgXml wpx;
+}
 
 void WasProBehCntr::startWprog(const WasProgram &wp)
 {

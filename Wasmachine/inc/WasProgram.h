@@ -16,6 +16,7 @@ struct WasProgram
 	uint timeWassing = 0;
 	uint temp = 0;
 	uint timecentrifugeren = 0;
+	uint RPM = 0;
 };
 
 
