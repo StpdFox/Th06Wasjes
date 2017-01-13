@@ -12,7 +12,9 @@ void PeriodiekeIOHandler::addEventSource(EventSource *ev)
 
 void PeriodiekeIOHandler::main()
 {
+	std::cout << "PeriodiekeIO suspending" << std::endl;
 	suspend();
+	std::cout << "PeriodiekeIO a wake" << std::endl;
     while(true)
     {
         wait(m_clock);

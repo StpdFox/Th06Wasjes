@@ -12,10 +12,10 @@
 
 struct WasProgram
 {
-	uint TimeSpoelen = 0;
-	uint TimeWassing = 0;
-	uint Temp = 0;
-	uint Timecentrifugeren = 0;
+	uint timeSpoelen = 0;
+	uint timeWassing = 0;
+	uint temp = 0;
+	uint timecentrifugeren = 0;
 };
 
 

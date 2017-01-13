@@ -25,11 +25,16 @@ private:
     RTOS::flag m_newPhaseFlag;
     RTOS::pool<uint> m_tempPool;
     RTOS::pool<uint> m_wLvlPool;
-    RTOS::mailbox<WasProgramPhase> m_wasPhase;
+    RTOS::pool<WasProgramPhase> m_wasPhase;
     
+    uint m_temp = 0;
+    uint m_waterLvl = 0;
+
+    bool m_running = false;
+
     void main(void);
 public:
-    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler);
+    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler, PeriodiekeIOHandler &perHandler);
     void updateTemp(TempSensor *ts);
     void updateWLevel(WaterLevelSensor *lvl);
     void setWProgPhase(const WasProgramPhase &wPhase);

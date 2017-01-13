@@ -3,6 +3,8 @@
 #include "WasProgUitvoerHandler.h"
 #include "TempSensor.h"
 #include "WaterLevelSensor.h"
+#include "WebSocket.h"
+#include "WasProBehCntr.h"
 
 int main(int argc, char** argv)
 {
@@ -17,9 +19,12 @@ int main(int argc, char** argv)
     //PassiveIOHandler blijft hangen op een wait, terwijl wasPorgUitvoerHandler er geen last van heeft
     PassiveIOHandler pasIOHandler(2);
     
-    std::cout << "PassiveIOHandler adress: " << &pasIOHandler << std::endl;
-    WasProgUitvoerHandler wPUH(0, ts, wls, pasIOHandler);
+    WasProgUitvoerHandler wPUH(0, ts, wls, pasIOHandler, perIOHandler);
     
+    WasProBehCntr WasProgrammaBeheerController(3, wPUH);
+
+    WebSocket ws(4, WasProgrammaBeheerController);
+
     RTOS::run();
     
     return 0;

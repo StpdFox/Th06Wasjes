@@ -2,13 +2,11 @@
 #include "PassiveIOMessage.h"
 #include <stdlib.h>
 
-WasProgrammaUitvoerenController::WasProgrammaUitvoerenController(PassiveIOHandler &pasIOHandler, WasProgUitvoerHandler &wPUH):
+WasProgrammaUitvoerenController::WasProgrammaUitvoerenController(PassiveIOHandler &pasIOHandler, WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler):
     m_pasIOHandler(pasIOHandler),
-    m_wPUH(wPUH)
-{
-    m_currentPhase.phase = NONE;
-    m_currentPhase.temp;
-}
+    m_wPUH(wPUH),
+	m_perIOHandler(perIOHandler)
+{}
 
 void WasProgrammaUitvoerenController::setNewPhase(const WasProgramPhase &wProgPhase)
 {
@@ -39,24 +37,36 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 {
     PassiveIOMessage message;
     bool newMessage = false;
-    if((m_currentPhase.phase = NONE))
+    if(m_currentPhase.phase == NONE)
     {
-//    	if(!m_perIOHandSuspend)
-//    	{
-//			m_pasIOHandler.suspend();
-//			m_perIOHandSuspend = true;
-//    	}
-    }
+    	std::cout << "doing none" << std::endl;
+    	if(!m_perIOHandSuspend)
+    	{
+			m_perIOHandler.suspend();
+			m_perIOHandSuspend = true;
+    	}
 
-    if((m_currentPhase.phase = SPOELEN))
-    {
-//    	if(m_perIOHandSuspend)
-//    	{
-//    		m_pasIOHandler
-//    	}
+    	if(m_heaterOn) message.heater = 0;
+    	if(m_waterValveOpen) message.waterValve = 0;
+    	if(m_currentRPM) message.motorRPM = 0;
+    	newMessage = true;
     }
-    else if((m_currentPhase.phase = WASSEN))
+    else if(m_currentPhase.phase == SPOELEN)
     {
+    	if(m_perIOHandSuspend)
+    	{
+    		m_perIOHandler.resume();
+    		m_perIOHandSuspend = false;
+    	}
+    }
+    else if(m_currentPhase.phase == WASSEN)
+    {
+    	if(m_perIOHandSuspend)
+    	{
+    		m_perIOHandler.resume();
+    		m_perIOHandSuspend = false;
+    	}
+
         if(m_wLevel < m_targetWLevel) 
         {
             if(!m_waterValveOpen)
@@ -88,7 +98,6 @@ void WasProgrammaUitvoerenController::checkWasMachine()
             {
                 if(m_heaterOn)
                 {
-                    std::cout << "heater off set" << std::endl;
                     message.heater = 0;
                     newMessage = true;
                     m_heaterOn = false;
@@ -116,18 +125,15 @@ void WasProgrammaUitvoerenController::checkWasMachine()
             }
         }
 
-        if(newMessage)
-        {
-            m_pasIOHandler.newMessage(message);
-            //std::cout << "sleep " << std::endl;
-            //sleep(1);
-           // std::cout << "done sleping" << std::endl;
-            m_pasIOHandler.setMessageFlag();
-            
-        }
     }
     else if((m_currentPhase.phase = CENTRIFUGEREN))
     {
         
+    }
+
+    if(newMessage)
+    {
+    	std::cout << "sending new message!" << std::endl;
+        m_pasIOHandler.newMessage(message);
     }
 }
