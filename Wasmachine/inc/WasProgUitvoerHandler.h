@@ -17,7 +17,6 @@ class WasProgUitvoerHandler : public RTOS::task, public TempListener, public Wat
 private:
     TempSensor &m_tempSensor;
     WaterLevelSensor &m_waterLvlSensor;
-    //WebSocked &m_webSocked;
     PassiveIOHandler &m_pasHandler;
     
     //StatusTonenController m_sTC;
@@ -25,25 +24,20 @@ private:
     
     RTOS::flag m_newTempFlag;
     RTOS::flag m_newWLvlFlag;
+    RTOS::flag m_newPhaseFlag;
     RTOS::pool<uint> m_tempPool;
     RTOS::pool<uint> m_wLvlPool;
-    RTOS::mailbox<WasProgramPhase> m_wasPhase;
-    RTOS::timer m_cancelTimer;
-    RTOS::timer m_phaseTimer;
+    RTOS::pool<WasProgramPhase> m_wasPhase;
     
-    uint m_temp;
-    uint m_waterLvl;
+    uint m_temp = 0;
+    uint m_waterLvl = 0;
     
     void main(void);
 public:
-    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler);
+    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler, PeriodiekeIOHandler &perHandler);
     void updateTemp(TempSensor *ts);
     void updateWLevel(WaterLevelSensor *lvl);
     void setWProgPhase(const WasProgramPhase &wPhase);
-    void setCancelTimer(const uint time);
-    void setPhaseTimer(const uint time);
-    void cancelCancelTimer();
-    void cancelPhaseTimer();
 };
 
 #endif

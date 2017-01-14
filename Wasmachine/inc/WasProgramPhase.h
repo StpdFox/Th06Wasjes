@@ -5,6 +5,7 @@
 
 enum Phase
 {
+	NONE,
     SPOELEN,
     WASSEN,
     CENTRIFUGEREN
@@ -12,10 +13,10 @@ enum Phase
 
 struct WasProgramPhase
 {
-    int temp;
-    int RPM;
-    uint time;
-    Phase phase;
+    int temp = 0;
+    int RPM = 0;
+    uint time = 0;
+    Phase phase = NONE;
 };
 
 #endif

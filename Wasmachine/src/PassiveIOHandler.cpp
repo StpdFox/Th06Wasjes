@@ -84,64 +84,81 @@ void PassiveIOHandler::pumpOff()
 
 void PassiveIOHandler::main(void)
 {
-    while(true)
-    {
-//        std::cerr << "suspend" << std::endl;
-//        RTOS::task::suspend();
-//        std::cerr << "resume" << std::endl;
-        //std::cout << "passive" << std::endl;
-//        if(wait() == m_doorLockFlag)
-//        {
-//            m_doorLockFlag.clear();
-//            std::cerr << "Door locked" << std::endl;
-//        }
-//        
-//        if(wait() == m_doorUnlockFlag)
-//        {
-//            std::cerr << "Door unlocked" << std::endl;
-//        }
-//        
-//        if(wait() == m_heaterOnFlag)
-//        {
-//            std::cerr << "Heater on" << std::endl;
-//        }
-//        
-//        if(wait() == m_heaterOffFlag)
-//        {
-//            std::cerr << "Heater off" << std::endl;
-//        }
-        if(wait() == m_waterValveOpenFlag)
-        {
-            std::cerr << "Water valve open" << std::endl;
-        }
-        if(wait() == m_waterValveCloseFlag)
-        {
-            std::cerr << "Water valve closed" << std::endl;
-        }
-        
-//        if(wait() == m_signalLedOnFlag)
-//        {
-//            std::cerr << "Signal led on" << std::endl;
-//        }
-//        
-//        if(wait() == m_signalLedOffFlag)
-//        {
-//            std::cerr << "Signal led off" << std::endl;
-//        }
-//        
-//        if(wait() == m_newRPMFlag)
-//        {
-//            std::cout << "Set motor on: " << m_motorRPMPool.read() << " RPM" << std::endl;
-//        }
-//        
-//        if(wait() == m_pumpOnFlag)
-//        {
-//            std::cout << "Pump on" << std::endl;
-//        }
-//        
-//        if(wait() == m_pumpOffFlag)
-//        {
-//            std::cout << "Pump off" << std::endl;
-//        }
-    }
+	while(true)
+	{
+		RTOS::event ev = wait(m_doorLockFlag + m_doorUnlockFlag + m_heaterOnFlag + m_heaterOffFlag + m_waterValveOpenFlag + m_waterValveCloseFlag +
+							  m_signalLedOnFlag + m_signalLedOffFlag + m_pumpOnFlag + m_pumpOffFlag + m_newRPMFlag);
+
+		if(ev == m_doorLockFlag)
+		{
+			std::cout << "Door locked" << std::endl;
+		}
+		else if(ev == m_doorUnlockFlag)
+		{
+			std::cout << "Door unlocked" << std::endl;
+		}
+		else if(ev == m_heaterOnFlag)
+		{
+			 std::cout << "Heater on" << std::endl;
+		}
+		else if(ev == m_heaterOffFlag)
+		{
+			std::cout << "Heater off" << std::endl;
+		}
+		else if(ev == m_waterValveOpenFlag)
+		{
+			std::cout << "Water valve open" << std::endl;
+		}
+		else if(ev == m_waterValveCloseFlag)
+		{
+			std::cout << "Water valve closed" << std::endl;
+		}
+		else if(ev == m_signalLedOnFlag)
+		{
+			std::cout << "Signal led on" << std::endl;
+		}
+		else if(ev == m_signalLedOffFlag)
+		{
+			std::cout << "Signal led off" << std::endl;
+		}
+		else if(ev == m_pumpOnFlag)
+		{
+			std::cout << "Pump on" << std::endl;
+		}
+		else if(ev == m_pumpOffFlag)
+		{
+			std::cout << "Pump off" << std::endl;
+		}
+		else if(ev == m_newRPMFlag)
+		{
+			std::cout << "set new RPM: " << m_motorRPMPool.read() << std::endl;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

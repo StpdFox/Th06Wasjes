@@ -1,19 +1,17 @@
 #include "WasProgUitvoerHandler.h"
 
-WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler) :
+WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler, PeriodiekeIOHandler &perHandler) :
     task(prio, "WasProgUitvoerHandler"),
     m_tempSensor(tempSensor),
     m_waterLvlSensor(waterLvlSensor),
-    //m_webSocked = webSocked,
     m_pasHandler(pasHandler),
-    m_wUC(m_pasHandler, *this),
+    m_wUC(m_pasHandler, *this, perHandler),
     m_newTempFlag(this, "NewTempFlag"),
     m_newWLvlFlag(this, "newWLvlFlag"),
+	m_newPhaseFlag(this, "newPhaseFlag"),
     m_tempPool("TempPool"),
     m_wLvlPool("WlvlPool"),
-    m_wasPhase("WasPhase"),
-    m_cancelTimer(this, "CancelTimer"),
-    m_phaseTimer(this, "PhaseTimer")
+    m_wasPhase("WasPhase")
 {
     std::cout << "PassiveIOHandler adress: " << &m_pasHandler << std::endl;
 }
@@ -21,84 +19,72 @@ WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSe
 void WasProgUitvoerHandler::updateTemp(TempSensor *ts)
 {
     m_tempPool.write(ts->getTemp());
-    //m_temp = ts->getTemp();
-    //std::cout << "temp: " << m_temp << std::endl;
-    //set(m_newTempFlag);
+    m_newTempFlag.set();
 }
 
 void WasProgUitvoerHandler::updateWLevel(WaterLevelSensor *lvl)
 {
     m_wLvlPool.write(lvl->getWaterLevel());
-    //m_waterLvl = lvl->getWaterLevel();
-    set(m_newWLvlFlag);
+    m_newWLvlFlag.set();
 }
 
 void WasProgUitvoerHandler::setWProgPhase(const WasProgramPhase &wPhase)
 {
+	std::cout << "going to set spul" << std::endl;
     m_wasPhase.write(wPhase);
-}
-
-void WasProgUitvoerHandler::setCancelTimer(const uint time)
-{
-    m_cancelTimer.set(time);
-}
-
-void WasProgUitvoerHandler::setPhaseTimer(const uint time)
-{
-    m_phaseTimer.set(time);
-}
-
-void WasProgUitvoerHandler::cancelCancelTimer()
-{
-    m_cancelTimer.cancel();
-}
-
-void WasProgUitvoerHandler::cancelPhaseTimer()
-{
-    m_phaseTimer.cancel();
+    std::cout << "done setting stuff" << std::endl;
+    m_newPhaseFlag.set();
+    std::cout << "new phase ding gezet" << std::endl;
 }
 
 void WasProgUitvoerHandler::main(void)
 {
     m_tempSensor.setListener(this);
     m_waterLvlSensor.setListener(this);
+
     while(true)
     {
-//        if(wait() == m_newTempFlag) 
-//        {
-//            m_wUC.setNewTemp(m_temp);
-//            m_wUC.checkWasMachine();
-//            m_pasHandler.resume();
-//        }
-        
-        
-        if(wait() == m_newWLvlFlag)
-        {
-            m_waterLvl = m_wLvlPool.read();
-            m_wUC.setNewWLvl(m_waterLvl);
-            m_wUC.checkWasMachine();
-            //m_pasHandler.resume();
-        }
-        
-        //std::cout << "afterflag" << std::endl;
-        
-        sleep(500);
+    	wait(m_newPhaseFlag);
+    	m_wUC.setNewPhase(m_wasPhase.read());
 
-//        if(wait() == m_cancelTimer) 
-//        {
-//                m_wUC.cancelTimeOver();
-//                std::cout << "cancel over time" << std::endl;
-//        }
-//
-//        if(wait() == m_phaseTimer)
-//        {
-//            std::cout << "phase time cancle" << std::endl;
-//            m_wUC.phaseTimeOver();
-//        }
+    	while(true)
+    	{
+    		RTOS::event ev = wait(m_newTempFlag + m_newWLvlFlag + m_newPhaseFlag);
 
-        //m_pasHandler.resume();
-        //std::cout << "sleep" << std::endl;
-        //sleep(5000);
-        //std::cout << "done checking" << std::endl;
+    		if(ev == m_newTempFlag)
+    		{
+    			m_temp = m_tempPool.read();
+    			m_wUC.setNewTemp(m_temp);
+    		}
+    		else if(ev == m_newWLvlFlag)
+    		{
+    			m_waterLvl = m_wLvlPool.read();
+    			m_wUC.setNewWLvl(m_waterLvl);
+    		}
+    		else if(ev == m_newPhaseFlag)
+    		{
+    			WasProgramPhase wpp = m_wasPhase.read();
+    			m_wUC.setNewPhase(wpp);
+    			m_wUC.checkWasMachine();
+    			if(wpp.phase == NONE) break;
+    		}
+    		m_wUC.checkWasMachine();
+    	}
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
