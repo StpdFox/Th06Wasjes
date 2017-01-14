@@ -35,8 +35,6 @@ void WasProgrammaUitvoerenController::phaseTimeOver()
 
 void WasProgrammaUitvoerenController::checkWasMachine()
 {
-    PassiveIOMessage message;
-    bool newMessage = false;
     if(m_currentPhase.phase == NONE)
     {
     	std::cout << "doing none" << std::endl;
@@ -46,10 +44,9 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 			m_perIOHandSuspend = true;
     	}
 
-    	if(m_heaterOn) message.heater = 0;
-    	if(m_waterValveOpen) message.waterValve = 0;
-    	if(m_currentRPM) message.motorRPM = 0;
-    	newMessage = true;
+    	if(m_heaterOn) m_pasIOHandler.heaterOff();
+    	if(m_waterValveOpen) m_pasIOHandler.closeWaterValve();
+    	if(m_currentRPM) m_pasIOHandler.setMotoRPM(0);
     }
     else if(m_currentPhase.phase == SPOELEN)
     {
@@ -71,8 +68,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
         {
             if(!m_waterValveOpen)
             {
-                message.waterValve = 1;
-                newMessage = true;
+                m_pasIOHandler.openWaterValve();
                 m_waterValveOpen = true;
             }
         }
@@ -80,8 +76,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
         {
             if(m_waterValveOpen)
             {
-                message.waterValve = 0;
-                newMessage = true;
+               m_pasIOHandler.closeWaterValve();
                 m_waterValveOpen = false;
             }
             
@@ -89,8 +84,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
             {
                 if(!m_heaterOn)
                 {
-                    message.heater = 1;
-                    newMessage = true;
+                	m_pasIOHandler.heaterOn();
                     m_heaterOn = true;
                 }
             }
@@ -98,14 +92,12 @@ void WasProgrammaUitvoerenController::checkWasMachine()
             {
                 if(m_heaterOn)
                 {
-                    message.heater = 0;
-                    newMessage = true;
+                    m_pasIOHandler.heaterOff();
                     m_heaterOn = false;
                 }
                 else
                 {
-                    message.motorRPM = rand() % 1000;
-                    newMessage = true;
+                    m_pasIOHandler.setMotoRPM(rand() % 1000);
                 }
 //                if(m_moterLeft)
 //                {
@@ -131,9 +123,4 @@ void WasProgrammaUitvoerenController::checkWasMachine()
         
     }
 
-    if(newMessage)
-    {
-    	std::cout << "sending new message!" << std::endl;
-        m_pasIOHandler.newMessage(message);
-    }
 }

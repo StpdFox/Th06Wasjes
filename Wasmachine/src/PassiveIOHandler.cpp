@@ -3,8 +3,18 @@
 
 PassiveIOHandler::PassiveIOHandler(const uint prio) : 
     task(prio, "PassIOHandler"),
-    m_newActionFlag(this, "messageFlag"),
-    m_messagePool("messagePool"),
+    m_doorLockFlag(this, "DoorLockFlag"),
+    m_doorUnlockFlag(this, "DoorUnLockFlag"),
+    m_heaterOnFlag(this, "HeaterOnFlag"),
+    m_heaterOffFlag(this, "HeaterOffFlag"),
+    m_waterValveOpenFlag(this, "WaterValveOpenFlag"),
+    m_waterValveCloseFlag(this, "WaterValveCloseFlag"),
+    m_signalLedOnFlag(this, "SignalLedOnFlag"),
+    m_signalLedOffFlag(this, "SignalLedOffFlag"),
+    m_pumpOnFlag(this, "PumpOnFlag"),
+    m_pumpOffFlag(this, "PumpOffFlag"),
+    m_newRPMFlag(this, "NewRPMFlag"),
+    m_motorRPMPool("MotorRPMPool"),
     m_doorLock(DefaultOutput(2, 64, 128)),
     m_heater(DefaultOutput(7, 16, 32)),
     m_waterValve(DefaultOutput(3, 16, 32)),
@@ -13,41 +23,142 @@ PassiveIOHandler::PassiveIOHandler(const uint prio) :
     m_motor(Motor(10))
 {}
 
-void PassiveIOHandler::newMessage(const PassiveIOMessage &message)
+void PassiveIOHandler::lockDoor()
 {
-    m_messagePool.write(message);
-    m_newActionFlag.set();
+   set(m_doorLockFlag);
+}
+
+void PassiveIOHandler::unlockDoor()
+{
+    set(m_doorUnlockFlag);
+}
+
+void PassiveIOHandler::heaterOn()
+{
+    set(m_heaterOnFlag);
+}
+
+void PassiveIOHandler::heaterOff()
+{
+    set(m_heaterOffFlag);
+}
+
+void PassiveIOHandler::openWaterValve()
+{
+    //std::cout << "set flag" << std::endl;
+    //set(m_waterValveOpenFlag);
+    m_waterValveOpenFlag.set();
+}
+
+void PassiveIOHandler::closeWaterValve()
+{
+    std::cout << "set flag" << std::endl;
+    set(m_waterValveCloseFlag);
+}
+
+void PassiveIOHandler::signalLedOn()
+{
+    set(m_signalLedOnFlag);
+}
+
+void PassiveIOHandler::signalLedOff()
+{
+    set(m_signalLedOffFlag);
+}
+
+void PassiveIOHandler::setMotoRPM(const int RPM)
+{
+    m_motorRPMPool.write(RPM);
+    set(m_newRPMFlag);
+}
+
+void PassiveIOHandler::pumpOn()
+{
+    set(m_pumpOnFlag);
+}
+
+void PassiveIOHandler::pumpOff()
+{
+    set(m_pumpOffFlag);
 }
 
 void PassiveIOHandler::main(void)
 {
-    PassiveIOMessage message;
-    int currentMoterRPM = 0;
-    while(true)
-    {
-        wait(m_newActionFlag);
-        message = m_messagePool.read();
-        m_newActionFlag.clear();
-        
-        if(message.doorLock == 1)           std::cout << "Door locked" << std::endl;
-        else if(message.doorLock == 0)      std::cout << "Door unlocked" << std::endl;
-        
-        if(message.heater == 1)             std::cout << "Heater on" << std::endl;
-        else if(message.heater == 0)        std::cout << "Heater off" << std::endl;
-        
-        if(message.pump == 1)               std::cout << "Pump on" << std::endl;
-        else if(message.pump == 0)          std::cout << "Pump off" << std::endl;
-        
-        if(message.signalLed == 1)          std::cout << "Signal led on" << std::endl;
-        else if(message.signalLed == 0)     std::cout << "Signal led off" << std::endl;
-        
-        if(message.waterValve == 1)         std::cout << "Water valve open" << std::endl;
-        else if(message.waterValve == 0)    std::cout << "Water valve closed" << std::endl;
-        
-        if(message.motorRPM != currentMoterRPM)
-        {
-            std::cout << "set motor RPM to: " << message.motorRPM << std::endl;
-            currentMoterRPM = message.motorRPM;
-        }
-    }
+	while(true)
+	{
+		RTOS::event ev = wait(m_doorLockFlag + m_doorUnlockFlag + m_heaterOnFlag + m_heaterOffFlag + m_waterValveOpenFlag + m_waterValveCloseFlag +
+							  m_signalLedOnFlag + m_signalLedOffFlag + m_pumpOnFlag + m_pumpOffFlag + m_newRPMFlag);
+
+		if(ev == m_doorLockFlag)
+		{
+			std::cout << "Door locked" << std::endl;
+		}
+		else if(ev == m_doorUnlockFlag)
+		{
+			std::cout << "Door unlocked" << std::endl;
+		}
+		else if(ev == m_heaterOnFlag)
+		{
+			 std::cout << "Heater on" << std::endl;
+		}
+		else if(ev == m_heaterOffFlag)
+		{
+			std::cout << "Heater off" << std::endl;
+		}
+		else if(ev == m_waterValveOpenFlag)
+		{
+			std::cout << "Water valve open" << std::endl;
+		}
+		else if(ev == m_waterValveCloseFlag)
+		{
+			std::cout << "Water valve closed" << std::endl;
+		}
+		else if(ev == m_signalLedOnFlag)
+		{
+			std::cout << "Signal led on" << std::endl;
+		}
+		else if(ev == m_signalLedOffFlag)
+		{
+			std::cout << "Signal led off" << std::endl;
+		}
+		else if(ev == m_pumpOnFlag)
+		{
+			std::cout << "Pump on" << std::endl;
+		}
+		else if(ev == m_pumpOffFlag)
+		{
+			std::cout << "Pump off" << std::endl;
+		}
+		else if(ev == m_newRPMFlag)
+		{
+			std::cout << "set new RPM: " << m_motorRPMPool.read() << std::endl;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
