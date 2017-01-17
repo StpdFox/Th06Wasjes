@@ -1,6 +1,7 @@
 #include "WasProgramPhase.h"
 #include "PassiveIOHandler.h"
 #include "PeriodiekeIOHandler.h"
+#include "Logger.h"
 
 class WasProgUitvoerHandler;
 
@@ -10,6 +11,7 @@ private:
     PassiveIOHandler &m_pasIOHandler;
     WasProgUitvoerHandler &m_wPUH;
     PeriodiekeIOHandler &m_perIOHandler;
+    Logger m_logger;
     
     WasProgramPhase m_currentPhase;
     int m_currentTemp = -1;

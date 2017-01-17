@@ -1,11 +1,12 @@
 #include "WasProgrammaUitvoerenController.h"
-#include "PassiveIOMessage.h"
+
 #include <stdlib.h>
 
 WasProgrammaUitvoerenController::WasProgrammaUitvoerenController(PassiveIOHandler &pasIOHandler, WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler):
     m_pasIOHandler(pasIOHandler),
     m_wPUH(wPUH),
-	m_perIOHandler(perIOHandler)
+	m_perIOHandler(perIOHandler),
+	m_logger(5)
 {}
 
 void WasProgrammaUitvoerenController::setNewPhase(const WasProgramPhase &wProgPhase)
@@ -37,6 +38,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 {
     if(m_currentPhase.phase == NONE)
     {
+    	m_logger.write("Phase if NONE");
     	if(!m_perIOHandSuspend)
     	{
 			m_perIOHandler.suspend();
@@ -49,6 +51,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
     }
     else if(m_currentPhase.phase == SPOELEN)
     {
+    	m_logger.write("Phase if SPOELEN");
     	if(m_perIOHandSuspend)
     	{
     		m_perIOHandler.resume();
@@ -57,6 +60,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
     }
     else if(m_currentPhase.phase == WASSEN)
     {
+    	m_logger.write("Phase if WASSEN");
     	if(m_perIOHandSuspend)
     	{
     		m_perIOHandler.resume();
@@ -119,7 +123,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
     }
     else if((m_currentPhase.phase = CENTRIFUGEREN))
     {
-        
+    	m_logger.write("Phase if CENTRIFUGEREN");
     }
 
 }
