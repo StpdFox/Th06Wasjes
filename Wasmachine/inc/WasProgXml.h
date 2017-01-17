@@ -28,10 +28,13 @@ private:
 
 	void loadXML();
 	void initXML();
-	void deleteWashProgram(const uint index);
+	void saveXML();
+
+	void deleteWashProgram(const Node &node);
 public:
 	WasProgXml();
-	void setNewWashingProgram(const WasProgram &wp);
+	void addNewWashProgram(const WasProgram &wp);
+	void deleteWashProgram(const WasProgram &wp);
 	std::vector<WasProgram> getWashingPrograms() const;
 };
 

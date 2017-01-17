@@ -7,6 +7,7 @@
 
 #include "WasProBehCntr.h"
 #include "WasProgramPhase.h"
+#include "WasProgram.h"
 #include "WasProgXml.h"
 
 WasProBehCntr::WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh) :
@@ -16,7 +17,15 @@ WasProBehCntr::WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh) :
 	m_startWProg("StartWProgMailBox"),
 	m_phaseTimer(this, "PhaseTimer")
 {
-	WasProgXml wpx;
+//	WasProgXml wpx;
+//	WasProgram wp;
+//	wp.RPM = 400;
+//	wp.temp = 60;
+//	wp.timeSpoelen = 50;
+//	wp.timeWassing = 1223;
+//	wp.timecentrifugeren = 234;
+//	wpx.addNewWashProgram(wp);
+	//wpx.deleteWashProgram(wp);
 }
 
 void WasProBehCntr::startWprog(const WasProgram &wp)
