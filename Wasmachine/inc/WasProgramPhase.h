@@ -13,7 +13,6 @@ enum Phase
 
 struct WasProgramPhase
 {
-	uint number = 0;
     int temp = 0;
     int RPM = 0;
     Phase phase = NONE;

@@ -52,7 +52,6 @@ void PassiveIOHandler::openWaterValve()
 
 void PassiveIOHandler::closeWaterValve()
 {
-    std::cout << "set flag" << std::endl;
     set(m_waterValveCloseFlag);
 }
 

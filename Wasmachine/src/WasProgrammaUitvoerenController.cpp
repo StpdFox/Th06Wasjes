@@ -37,7 +37,6 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 {
     if(m_currentPhase.phase == NONE)
     {
-    	std::cout << "doing none" << std::endl;
     	if(!m_perIOHandSuspend)
     	{
 			m_perIOHandler.suspend();

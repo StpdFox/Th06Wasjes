@@ -15,19 +15,10 @@ WasProgXml::WasProgXml()
 {
 	try
 	{
-		std::cout << "loading" << std::endl;
 		loadXML();
-		std::cout << "done loading" << std::endl;
-		for(WasProgram wp : m_wasPrograms)
-		{
-			std::cout << "times: " << wp.timeSpoelen << ", " << wp.timeWassing << ", " << wp.timecentrifugeren << std::endl;
-			std::cout << "temp: " << wp.temp << std::endl;
-			std::cout << "rpm: " << wp.RPM << std::endl;
-		}
 	}
 	catch (uint e)
 	{
-		std::cout << "e: " << e << std::endl;
 		if(e == 0) initXML();
 	}
 }

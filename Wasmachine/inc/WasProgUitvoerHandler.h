@@ -30,8 +30,6 @@ private:
     uint m_temp = 0;
     uint m_waterLvl = 0;
 
-    bool m_running = false;
-
     void main(void);
 public:
     WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler, PeriodiekeIOHandler &perHandler);
