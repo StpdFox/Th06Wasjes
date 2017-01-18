@@ -1,6 +1,7 @@
 #include "WasProgUitvoerHandler.h"
 
-WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler, PeriodiekeIOHandler &perHandler) :
+WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler,
+											 PeriodiekeIOHandler &perHandler) :
     task(prio, "WasProgUitvoerHandler"),
     m_tempSensor(tempSensor),
     m_waterLvlSensor(waterLvlSensor),
@@ -65,3 +66,6 @@ void WasProgUitvoerHandler::main(void)
     	}
     }
 }
+
+WasProgUitvoerHandler::~WasProgUitvoerHandler()
+{}

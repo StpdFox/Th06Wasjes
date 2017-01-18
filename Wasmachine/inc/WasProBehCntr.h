@@ -11,14 +11,23 @@
 #include "pRTOS.h"
 #include "WasProgUitvoerHandler.h"
 #include "WasProgram.h"
+#include "WasProgXml.h"
 
 class WasProBehCntr : public RTOS::task
 {
 private:
 	WasProgUitvoerHandler &m_wh;
+	WasProgXml m_wpx;
 
-	RTOS::flag m_mailFlag;
-	RTOS::mailbox<WasProgram> m_startWProg;
+	RTOS::flag m_startWProgFlag;
+	RTOS::flag m_setNewWProgFlag;
+	RTOS::flag m_deleteWProgFlag;
+
+
+	RTOS::mailbox<WasProgram> m_startWProgBox;
+	RTOS::mailbox<WasProgram> m_setWProgBox;
+	RTOS::mailbox<WasProgram> m_deleteWProgBox;
+
 	RTOS::timer m_phaseTimer;
 
 	WasProgram m_currentWasProgram;
@@ -26,7 +35,12 @@ private:
 	void main(void);
 public:
 	WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh);
-	void startWprog(const WasProgram &wp);
+	virtual ~WasProBehCntr();
+
+	void startWProg(const WasProgram &wp);
+	void setWProg(const WasProgram &wp);
+	void deleteWProg(const WasProgram &wp);
+	void changeWProg(const WasProgram &orWp, const WasProgram &newWp);
 };
 
 

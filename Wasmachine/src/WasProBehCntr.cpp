@@ -8,13 +8,16 @@
 #include "WasProBehCntr.h"
 #include "WasProgramPhase.h"
 #include "WasProgram.h"
-#include "WasProgXml.h"
 
 WasProBehCntr::WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh) :
 	RTOS::task(prio, "wbc"),
 	m_wh(wh),
-	m_mailFlag(this, "MailFlag"),
-	m_startWProg("StartWProgMailBox"),
+	m_startWProgFlag(this, "MailFlag"),
+	m_setNewWProgFlag(this, "NewProgFlag"),
+	m_deleteWProgFlag(this, "DeleteProgFlag"),
+	m_startWProgBox("StartWProgMailBox"),
+	m_setWProgBox("SetWprogBox"),
+	m_deleteWProgBox("DeleteWProgBox"),
 	m_phaseTimer(this, "PhaseTimer")
 {
 //	WasProgXml wpx;
@@ -28,30 +31,59 @@ WasProBehCntr::WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh) :
 //	wpx.deleteWashProgram(wp);
 }
 
-void WasProBehCntr::startWprog(const WasProgram &wp)
+void WasProBehCntr::startWProg(const WasProgram &wp)
 {
 	//TODO The set of the m_mailFlag must be under the write off the pool.
 
-	m_mailFlag.set();
-	m_startWProg.write(wp);
+	m_startWProgFlag.set();
+	m_startWProgBox.write(wp);
 //	m_mailFlag.set();
+}
+
+void WasProBehCntr::setWProg(const WasProgram &wp)
+{
+	m_setWProgBox.write(wp);
+	m_setNewWProgFlag.set();
+}
+
+void WasProBehCntr::deleteWProg(const WasProgram &wp)
+{
+	m_deleteWProgBox.writer(wp);
+	m_deleteWProgFlag.set();
+}
+
+void WasProBehCntr::changeWProg(const WasProgram &orWp, const WasProgram &newWp)
+{
+
 }
 
 void WasProBehCntr::main(void)
 {
 	while(true)
 	{
-		wait(m_mailFlag);
-		m_currentWasProgram = m_startWProg.read();
-		WasProgramPhase wpp;
-		wpp.phase = WASSEN;
-		wpp.temp = m_currentWasProgram.temp;
-		m_wh.setWProgPhase(wpp);
-		m_phaseTimer.set(m_currentWasProgram.timeWassing S);
-		wait(m_phaseTimer);
-		wpp.phase = NONE;
-		wpp.temp = 0;
-		m_wh.setWProgPhase(wpp);
+		RTOS::event ev =  wait(m_startWProgFlag + m_setNewWProgFlag + m_deleteWProgFlag);
+
+		if(ev == m_startWProgFlag)
+		{
+			m_currentWasProgram = m_startWProgBox.read();
+			WasProgramPhase wpp;
+			wpp.phase = WASSEN;
+			wpp.temp = m_currentWasProgram.temp;
+			m_wh.setWProgPhase(wpp);
+			m_phaseTimer.set(m_currentWasProgram.timeWassing S);
+			wait(m_phaseTimer);
+			wpp.phase = NONE;
+			wpp.temp = 0;
+			m_wh.setWProgPhase(wpp);
+		}
+		else if(ev == m_setNewWProgFlag)
+		{
+			m_wpx.addNewWashProgram(m_setWProgBox.read());
+		}
+		else if(ev == m_deleteWProgFlag)
+		{
+			m_wpx.deleteWashProgram(m_deleteWProgBox.read());
+		}
 	}
 }
 

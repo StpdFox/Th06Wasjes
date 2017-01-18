@@ -2,14 +2,7 @@
 #define __Phase
 
 #include <sys/types.h>
-
-enum Phase
-{
-	NONE,
-    SPOELEN,
-    WASSEN,
-    CENTRIFUGEREN
-};
+#include "Phase.h"
 
 struct WasProgramPhase
 {
