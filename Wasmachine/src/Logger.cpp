@@ -28,7 +28,8 @@ Logger::Logger(const uint prio) :
 
 void Logger::write(const std::string &message)
 {
-	m_logChannel.write(message);
+	//TODO turn on to for logging
+	//m_logChannel.write(message);
 }
 
 void Logger::main(void)

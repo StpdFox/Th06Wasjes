@@ -11,7 +11,8 @@ WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSe
 	m_newPhaseFlag(this, "newPhaseFlag"),
     m_tempPool("TempPool"),
     m_wLvlPool("WlvlPool"),
-    m_wasPhase("WasPhase")
+    m_wasPhase("WasPhase"),
+	m_wCUTimer(this, "wCUTimer")
 {}
 
 void WasProgUitvoerHandler::updateTemp(TempSensor *ts)
@@ -31,6 +32,11 @@ void WasProgUitvoerHandler::setWProgPhase(const WasProgramPhase &wPhase)
     m_newPhaseFlag.set();
 }
 
+void WasProgUitvoerHandler::setWCUTimer(const uint time)
+{
+	m_wCUTimer.set(time);
+}
+
 void WasProgUitvoerHandler::main(void)
 {
     m_tempSensor.setListener(this);
@@ -43,7 +49,7 @@ void WasProgUitvoerHandler::main(void)
     	m_wUC.checkWasMachine();
     	while(true)
     	{
-    		RTOS::event ev = wait(m_newValueFlag + m_newPhaseFlag);
+    		RTOS::event ev = wait(m_newValueFlag + m_newPhaseFlag + m_wCUTimer);
     		if(ev == m_newValueFlag)
     		{
     	    	m_temp = m_tempPool.read();
@@ -52,7 +58,6 @@ void WasProgUitvoerHandler::main(void)
     	    	m_wUC.setNewWLvl(m_waterLvl);
     	    	m_wUC.checkWasMachine();
     		}
-
     		else if(ev == m_newPhaseFlag)
     		{
         	   WasProgramPhase wpp = m_wasPhase.read();
@@ -62,6 +67,10 @@ void WasProgUitvoerHandler::main(void)
         	   {
         		   break;
         	   }
+    		}
+    		else if(ev == m_wCUTimer)
+    		{
+    			m_wUC.timeOver();
     		}
     	}
     }

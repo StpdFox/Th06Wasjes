@@ -8,12 +8,9 @@
 #include "TempListener.h"
 #include "WaterLevelSensor.h"
 #include "WaterLvlListener.h"
-#include "StatusToonController.h"
 #include "WasProgrammaUitvoerenController.h"
 #include "WasProgramPhase.h"
 #include "PassiveIOHandler.h"
-
-class WebSocket;
 
 class WasProgUitvoerHandler : public RTOS::task, public TempListener, public WaterLvlListener
 {
@@ -31,6 +28,8 @@ private:
     RTOS::pool<uint> m_wLvlPool;
     RTOS::pool<WasProgramPhase> m_wasPhase;
 
+    RTOS::timer m_wCUTimer;
+
     uint m_temp = 0;
     uint m_waterLvl = 0;
 
@@ -42,6 +41,7 @@ public:
     void updateTemp(TempSensor *ts);
     void updateWLevel(WaterLevelSensor *lvl);
     void setWProgPhase(const WasProgramPhase &wPhase);
+    void setWCUTimer(const uint time);
 };
 
 #endif

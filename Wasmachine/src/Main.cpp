@@ -16,14 +16,13 @@ int main(int argc, char** argv)
     perIOHandler.addEventSource(&ts);
     perIOHandler.addEventSource(&wls);
     
-    //PassiveIOHandler blijft hangen op een wait, terwijl wasPorgUitvoerHandler er geen last van heeft
     PassiveIOHandler pasIOHandler(2);
 
     WasProgUitvoerHandler wPUH(0, ts, wls, pasIOHandler, perIOHandler);
     
-    WasProBehCntr WasProgrammaBeheerController(3, wPUH);
+    //WasProBehCntr WasProgrammaBeheerController(3, wPUH);
 
-    WebSocket ws(4, WasProgrammaBeheerController);
+    WebSocket ws(4, wPUH);
 
     RTOS::run();
     
