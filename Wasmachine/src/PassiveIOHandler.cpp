@@ -1,8 +1,9 @@
 #include <iostream>
 #include "PassiveIOHandler.h"
 
-PassiveIOHandler::PassiveIOHandler(const uint prio) : 
+PassiveIOHandler::PassiveIOHandler(const uint prio, UartComs &uc) :
     task(prio, "PassIOHandler"),
+	m_uc(uc),
     m_doorLockFlag(this, "DoorLockFlag"),
     m_doorUnlockFlag(this, "DoorUnLockFlag"),
     m_heaterOnFlag(this, "HeaterOnFlag"),
@@ -21,7 +22,9 @@ PassiveIOHandler::PassiveIOHandler(const uint prio) :
     m_signalLed(DefaultOutput(11, 16, 32)),
     m_pump(DefaultOutput(5, 16, 32)),
     m_motor(Motor(10))
-{}
+{
+m_uc.writeUart("\x01", "\x10");
+}
 
 void PassiveIOHandler::lockDoor()
 {
@@ -106,10 +109,14 @@ void PassiveIOHandler::main(void)
 		}
 		else if(ev == m_waterValveOpenFlag)
 		{
+			m_uc.writeUart("\x03", "\x10");
 			std::cout << "Water valve open" << std::endl;
+			sleep (1 S);
+			std::cout << m_uc.readUart("\x06") << std::endl;
 		}
 		else if(ev == m_waterValveCloseFlag)
 		{
+			m_uc.writeUart("\x03", "\x20");
 			std::cout << "Water valve closed" << std::endl;
 		}
 		else if(ev == m_signalLedOnFlag)
@@ -130,7 +137,16 @@ void PassiveIOHandler::main(void)
 		}
 		else if(ev == m_newRPMFlag)
 		{
+			m_uc.writeUart("\x0A", "\x05");
 			std::cout << "set new RPM: " << m_motorRPMPool.read() << std::endl;
+			if(m_motorRPMPool.read() < 0)
+			{
+				m_uc.writeUart("\x0A", "\x02");
+			}
+			else
+			{
+				m_uc.writeUart("\x0A", "\x50");
+			}
 		}
 	}
 }
