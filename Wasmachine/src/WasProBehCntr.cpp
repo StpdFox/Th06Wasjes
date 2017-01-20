@@ -21,7 +21,8 @@ WasProBehCntr::WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh, WebSock
 	m_startWProgBox("StartWProgMailBox"),
 	m_setWProgBox("SetWprogBox"),
 	m_deleteWProgBox("DeleteWProgBox"),
-	m_phaseTimer(this, "PhaseTimer")
+	m_phaseTimer(this, "PhaseTimer"),
+	m_updateTimer(this, "UpdateTimer")
 {
 //	WasProgXml wpx;
 //	WasProgram wp;
@@ -99,21 +100,39 @@ void WasProBehCntr::washing()
 		m_currentWasProgramPhase.RPM = 0;
 		m_wh.setWProgPhase(m_currentWasProgramPhase);
 		m_running = false;
+
+		m_updateTimer.cancel();
+		CurrentStatus cs;
+		cs.phase = m_currentWasProgramPhase.phase;
+		cs.timeRemaining = 0;
+		m_ws.setProgres(cs);
 	}
+}
+
+void WasProBehCntr::updateWebSocked()
+{
+	m_totalTime -= 60;
+	CurrentStatus cs;
+	cs.phase = m_currentWasProgramPhase.phase;
+	cs.timeRemaining = m_totalTime;
+	m_ws.setProgres(cs);
 }
 
 void WasProBehCntr::main(void)
 {
 	while(true)
 	{
-		RTOS::event ev =  wait(m_startWProgFlag + m_setNewWProgFlag + m_deleteWProgFlag + m_phaseTimer);
+		RTOS::event ev =  wait(m_startWProgFlag + m_setNewWProgFlag + m_deleteWProgFlag + m_phaseTimer + m_updateTimer + m_getWProgsFlag);
 
 		if(ev == m_startWProgFlag)
 		{
 			if(!m_running)
 			{
 				m_currentWasProgram = m_startWProgBox.read();
+				m_totalTime = m_currentWasProgram.timeSpoelen + m_currentWasProgram.timeWassing + m_currentWasProgram.timecentrifugeren + 60;
 				washing();
+				updateWebSocked();
+				m_updateTimer.set(60 S);
 			}
 			else m_startWProgBox.read();
 		}
@@ -128,6 +147,15 @@ void WasProBehCntr::main(void)
 		else if(ev == m_phaseTimer)
 		{
 			washing();
+		}
+		else if(ev == m_updateTimer)
+		{
+			updateWebSocked();
+			m_updateTimer.set(60 S);
+		}
+		else if(ev == m_getWProgsFlag)
+		{
+			m_ws.setWashPrograms(m_wpx.getWashingPrograms());
 		}
 	}
 }

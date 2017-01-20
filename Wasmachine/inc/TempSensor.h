@@ -16,6 +16,8 @@ private:
     
 public:
     TempSensor(const char reqByte);
+    virtual ~TempSensor();
+
     void updateState();
     void setListener(TempListener *tl);
     uint getTemp() const;

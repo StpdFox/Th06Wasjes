@@ -5,6 +5,7 @@ class EventSource
 {
 public:
     virtual void updateState(void) = 0;
+    virtual ~EventSource(){}
 };
 
 #endif

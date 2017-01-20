@@ -135,7 +135,8 @@ void PassiveIOHandler::main(void)
 	}
 }
 
-
+PassiveIOHandler::~PassiveIOHandler()
+{}
 
 
 

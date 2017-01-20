@@ -15,6 +15,8 @@ private:
     void main(void);
 public:
     PeriodiekeIOHandler(const uint prio, const uint interval);
+    virtual ~PeriodiekeIOHandler();
+
     void addEventSource(EventSource *ev);
 };
 

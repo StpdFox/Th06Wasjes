@@ -1,7 +1,9 @@
 #include "WaterLevelSensor.h"
 #include <stdlib.h> //ToDo remove when rand() is removed
 
-WaterLevelSensor::WaterLevelSensor(const char reqByte) : m_requestByte(reqByte)
+WaterLevelSensor::WaterLevelSensor(const char reqByte) :
+	m_requestByte(reqByte),
+	m_wlvlListeners(nullptr)
 {}
 
 void WaterLevelSensor::readWaterLevel()
@@ -26,3 +28,6 @@ uint WaterLevelSensor::getWaterLevel() const
 {
     return m_waterLevel;
 }
+
+WaterLevelSensor::~WaterLevelSensor()
+{}

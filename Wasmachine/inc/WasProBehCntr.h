@@ -33,13 +33,16 @@ private:
 	RTOS::mailbox<WasProgram> m_deleteWProgBox;
 
 	RTOS::timer m_phaseTimer;
+	RTOS::timer m_updateTimer;
 
 	WasProgram m_currentWasProgram;
 	WasProgramPhase m_currentWasProgramPhase;
 
 	bool m_running = false;
+	uint m_totalTime = 0;
 
 	void washing();
+	void updateWebSocked();
 	void main(void);
 public:
 	WasProBehCntr(const uint prio, WasProgUitvoerHandler &wh, WebSocket &ws);

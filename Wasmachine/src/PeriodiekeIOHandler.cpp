@@ -22,3 +22,7 @@ void PeriodiekeIOHandler::main()
 		}
     }
 }
+
+
+PeriodiekeIOHandler::~PeriodiekeIOHandler()
+{}

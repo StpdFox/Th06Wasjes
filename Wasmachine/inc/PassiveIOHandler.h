@@ -31,6 +31,7 @@ private:
     void main(void);
 public:
     PassiveIOHandler(const uint prio);
+    virtual ~PassiveIOHandler();
 
     void lockDoor();
     void unlockDoor();

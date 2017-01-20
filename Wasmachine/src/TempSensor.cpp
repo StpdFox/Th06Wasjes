@@ -1,7 +1,9 @@
 #include "TempSensor.h"
 #include <stdlib.h> //ToDo remove when rand() is removed
 
-TempSensor::TempSensor(const char reqByte) : m_reqByte(reqByte) 
+TempSensor::TempSensor(const char reqByte) :
+	m_reqByte(reqByte),
+	m_listener(nullptr)
 {}
 
 void TempSensor::readTemp()
@@ -26,3 +28,7 @@ uint TempSensor::getTemp() const
 {
     return m_temp;
 }
+
+
+TempSensor::~TempSensor()
+{}

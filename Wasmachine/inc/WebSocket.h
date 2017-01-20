@@ -31,6 +31,8 @@ private:
 	void main(void);
 public:
 	WebSocket(const uint prio, WasProgUitvoerHandler &wpUC);
+	virtual ~WebSocket();
+
 	void setWashPrograms(const std::vector<WasProgram> &wps);
 	void setProgres(const CurrentStatus &cs);
 };

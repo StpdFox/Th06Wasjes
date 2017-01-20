@@ -31,11 +31,9 @@ void WebSocket::setProgres(const CurrentStatus &cs)
 
 void WebSocket::main(void)
 {
-///	uint time = 1;
+	m_wbc.getWProgs();
 	while(true)
 	{
-//		sleep(time S);
-		m_wbc.getWProgs();
 		RTOS::event ev = wait(m_wasProgramsFlag + m_progresFlag);
 		if(ev == m_progresFlag)
 		{
@@ -50,15 +48,8 @@ void WebSocket::main(void)
 				m_wbc.startWProg(m_wps[0]);
 			}
 		}
-
-//		WasProgram wp;
-//		wp.temp = 25;
-//		wp.timeWassing = 60;
-//		wp.timeSpoelen = 30;
-//		wp.timecentrifugeren = 40;
-//		m_wbc.startWProg(wp);
-		//std::cout << "WebSocket suspend" << std::endl;
-//		time = 10000000;
-		//suspend();
 	}
 }
+
+WebSocket::~WebSocket()
+{}

@@ -16,6 +16,8 @@ private:
     
 public:
     WaterLevelSensor(const char reqByte);
+    virtual ~WaterLevelSensor();
+
     void updateState();
     void setListener(WaterLvlListener *wLL);
     uint getWaterLevel() const;
