@@ -1,12 +1,11 @@
 #include "WasProgUitvoerHandler.h"
 
-WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler,
+WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor,
 											 PeriodiekeIOHandler &perHandler) :
     task(prio, "WasProgUitvoerHandler"),
     m_tempSensor(tempSensor),
     m_waterLvlSensor(waterLvlSensor),
-    m_pasHandler(pasHandler),
-    m_wUC(m_pasHandler, *this, perHandler),
+    m_wUC(*this, perHandler),
     m_newValueFlag(this, "NewValueFlag"),
 	m_newPhaseFlag(this, "newPhaseFlag"),
     m_tempPool("TempPool"),

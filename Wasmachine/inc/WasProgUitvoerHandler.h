@@ -17,7 +17,6 @@ class WasProgUitvoerHandler : public RTOS::task, public TempListener, public Wat
 private:
     TempSensor &m_tempSensor;
     WaterLevelSensor &m_waterLvlSensor;
-    PassiveIOHandler &m_pasHandler;
     
     //StatusToonController m_sTC;
     WasProgrammaUitvoerenController m_wUC;
@@ -35,7 +34,7 @@ private:
 
     void main(void);
 public:
-    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PassiveIOHandler &pasHandler, PeriodiekeIOHandler &perHandler);
+    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PeriodiekeIOHandler &perHandler);
     virtual ~WasProgUitvoerHandler();
 
     void updateTemp(TempSensor *ts);

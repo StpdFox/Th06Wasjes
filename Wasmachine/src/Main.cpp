@@ -15,10 +15,8 @@ int main(int argc, char** argv)
     
     perIOHandler.addEventSource(&ts);
     perIOHandler.addEventSource(&wls);
-    
-    PassiveIOHandler pasIOHandler(2);
 
-    WasProgUitvoerHandler wPUH(0, ts, wls, pasIOHandler, perIOHandler);
+    WasProgUitvoerHandler wPUH(0, ts, wls, perIOHandler);
     
     //WasProBehCntr WasProgrammaBeheerController(3, wPUH);
 

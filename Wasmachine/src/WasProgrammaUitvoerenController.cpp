@@ -1,10 +1,10 @@
 #include "WasProgrammaUitvoerenController.h"
 #include "WasProgUitvoerHandler.h"
 
-WasProgrammaUitvoerenController::WasProgrammaUitvoerenController(PassiveIOHandler &pasIOHandler, WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler):
-    m_pasIOHandler(pasIOHandler),
+WasProgrammaUitvoerenController::WasProgrammaUitvoerenController(WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler):
     m_wPUH(wPUH),
 	m_perIOHandler(perIOHandler),
+	m_pasIOHandler(2),
 	m_logger(5)
 {}
 

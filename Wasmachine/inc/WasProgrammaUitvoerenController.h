@@ -11,9 +11,9 @@ class WasProgUitvoerHandler;
 class WasProgrammaUitvoerenController
 {
 private:
-    PassiveIOHandler &m_pasIOHandler;
     WasProgUitvoerHandler &m_wPUH;
     PeriodiekeIOHandler &m_perIOHandler;
+    PassiveIOHandler m_pasIOHandler;
     Logger m_logger;
     
     WasProgramPhase m_currentPhase;
@@ -36,7 +36,7 @@ private:
 
     void clearPhase();
 public:
-    WasProgrammaUitvoerenController(PassiveIOHandler &pIOHandler, WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler);
+    WasProgrammaUitvoerenController(WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler);
     void setNewPhase(const WasProgramPhase &wProgPhase);
     void setNewTemp(const uint);
     void setNewWLvl(const uint);
