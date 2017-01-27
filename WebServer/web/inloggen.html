@@ -1,0 +1,47 @@
+<html>
+
+	<head>
+		<title>Userinterface Wasmachine</title>
+		<meta charset=utf-8>
+		<meta name="description" content="Wasmachine userinterface">
+		<meta name="author" content="Marianne Delmaar, Hendrik Cornelisse, Matthijs Vos">
+		<link href="main.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="wasmachine.js">	</script>
+	</head>
+	
+	<body>
+	
+		<img id = "banner" src= "images/wasmachine.jpg" alt="Banner">
+	
+		<div id = nav>
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="inloggen.html"class="selected">Inloggen</a></li>
+				<li><a href="wasprogrammas.html">Wasprogramma's</a></li>
+				<li><a href="loggegevens.html">Loggegevens</a></li>
+				<li><a href="contact.html">Contact</a></li>
+			</ul>
+		</div>			
+		<div id=title>
+			<h1>Inloggen</h1>
+		</div>
+		
+		
+		<div id=contentInlog>
+			<p id=ingelogd></p>
+			<div id=login class="loggingIn">
+				<form name ="inloggen" method="POST" action = "inloggen.php" onsubmit="return loggedIn(this)">
+					<label>WasmachineID:</label>
+					<input name="ID" type="text" size="30"/>
+					<label>Wachtwoord:</label>
+					<input name="ww" type="password" size="30"/>
+					<p id="buttons">
+					<input type="submit" value="Login"/>
+					</p>
+				</form>
+			</div>
+		</div>
+		
+	</body>
+	
+</html>

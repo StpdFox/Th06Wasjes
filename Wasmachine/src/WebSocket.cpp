@@ -67,10 +67,11 @@ void WebSocket::writeWashingProgramsToFifo()
 	std::string message = "";
 	for(const WasProgram &wp : m_wps)
 	{
-		message = std::to_string(wp.timeSpoelen) ;
-		std::cout << message << std::endl;
-	}
+		message += std::to_string(wp.timeSpoelen) + ',' + std::to_string(wp.timeWassing) + ',' + std::to_string(wp.temp) + ',' +
+				  std::to_string(wp.timecentrifugeren) + ',' + std::to_string(wp.RPM) + ';';
 
+	}
+	std::cout << message << std::endl;
 	int fd;
 	int byte;
 
