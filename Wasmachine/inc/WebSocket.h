@@ -28,6 +28,16 @@ private:
 	RTOS::pool< std::vector<WasProgram> > m_wasProgramsPool;
 	RTOS::pool<CurrentStatus> m_progresPool;
 
+	RTOS::clock m_checkPipe;
+
+	const std::string m_pathRead = "/tmp/Wachmachine";
+	const std::string m_pathWrite = "/tmp/WebServer";
+
+	int readerFifo = -1;
+
+
+	void readFifo();
+	void writeWashingProgramsToFifo();
 	void main(void);
 public:
 	WebSocket(const uint prio, WasProgUitvoerHandler &wpUC);
