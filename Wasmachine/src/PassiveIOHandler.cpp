@@ -1,5 +1,6 @@
 #include <iostream>
 #include "PassiveIOHandler.h"
+#include <fcntl.h>
 
 PassiveIOHandler::PassiveIOHandler(const uint prio, UartComs &uc) :
     task(prio, "PassIOHandler"),
@@ -23,7 +24,17 @@ PassiveIOHandler::PassiveIOHandler(const uint prio, UartComs &uc) :
     m_pump(DefaultOutput(5, 16, 32)),
     m_motor(Motor(10))
 {
-m_uc.writeUart("\x01", "\x10");
+	m_uc.writeUart("\x01", "\x10");
+
+	char buf[256];
+	fcntl(m_uc.m_fd, F_SETFL, 1);
+	std::cout << "reading stuff" << std::endl;
+	int byte = read(m_uc.m_fd, (void*)buf, 255);
+
+	std::cout << "0: " << (int)buf[0] << std::endl;
+	std::cout << "1: " << (int)buf[1] << std::endl;
+
+	//m_uc.readUart();
 }
 
 void PassiveIOHandler::lockDoor()
@@ -110,13 +121,17 @@ void PassiveIOHandler::main(void)
 		else if(ev == m_waterValveOpenFlag)
 		{
 			m_uc.writeUart("\x03", "\x10");
+			m_uc.readUart();
 			std::cout << "Water valve open" << std::endl;
-			sleep (1 S);
-			std::cout << m_uc.readUart("\x06") << std::endl;
+			//sleep (1 S);
+			//std::cout << m_uc.readUart("\x06") << std::endl;
+			//std::cout << m_uc.readUart()
+			//m_uc.writeUart();
+
 		}
 		else if(ev == m_waterValveCloseFlag)
 		{
-			m_uc.writeUart("\x03", "\x20");
+			//m_uc.writeUart("\x03", "\x20");
 			std::cout << "Water valve closed" << std::endl;
 		}
 		else if(ev == m_signalLedOnFlag)
@@ -141,11 +156,11 @@ void PassiveIOHandler::main(void)
 			std::cout << "set new RPM: " << m_motorRPMPool.read() << std::endl;
 			if(m_motorRPMPool.read() < 0)
 			{
-				m_uc.writeUart("\x0A", "\x02");
+				m_uc.writeUart("\x0A", "\x01");
 			}
 			else
 			{
-				m_uc.writeUart("\x0A", "\x50");
+				m_uc.writeUart("\x0A", "\x02");
 			}
 		}
 	}

@@ -8,19 +8,23 @@
 #ifndef INC_UARTCOMS_H_
 #define INC_UARTCOMS_H_
 
+#include <iostream>
 
 class UartComs
 {
 private:
-	int m_fd;
+
 
 	void configure();
 public:
 	UartComs();
 	~UartComs();
 
+	int m_fd;
+
 	void writeUart(const char *command, const char *value);
-	int readUart(const char *command);
+	int readUart(const uint8_t &command);
+	int readUart();
 };
 
 
