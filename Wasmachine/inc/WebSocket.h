@@ -28,6 +28,8 @@ private:
 	RTOS::pool< std::vector<WasProgram> > m_wasProgramsPool;
 	RTOS::pool<CurrentStatus> m_progresPool;
 
+	RTOS::clock m_clock;
+
 	void main(void);
 public:
 	WebSocket(const uint prio, WasProgUitvoerHandler &wpUC);

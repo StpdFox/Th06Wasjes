@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<WashingPrograms N="2">
+	<Washing>
+		<Flush Time="300" />
+		<Wash Time="500" Temperature="50" />
+		<Spin Time="300"  RPM="1000"/>
+	</Washing>
+	<Washing>
+		<Flush Time="200" />
+		<Wash Time="5500" Temperature="60" />
+		<Spin Time="400"  RPM="1200"/>
+	</Washing>
+</WashingPrograms>

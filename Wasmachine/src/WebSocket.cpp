@@ -14,7 +14,8 @@ WebSocket::WebSocket(const uint prio, WasProgUitvoerHandler &wpUC) :
 	m_wasProgramsFlag(this, "wasProgramsFlag"),
 	m_progresFlag(this, "ProgresFlag"),
 	m_wasProgramsPool("WasProgramsPool"),
-	m_progresPool("ProgresPool")
+	m_progresPool("ProgresPool"),
+	m_clock(this, 1000 S, "clock")
 {}
 
 void WebSocket::setWashPrograms(const std::vector<WasProgram> &wps)
@@ -34,7 +35,7 @@ void WebSocket::main(void)
 	m_wbc.getWProgs();
 	while(true)
 	{
-		RTOS::event ev = wait(m_wasProgramsFlag + m_progresFlag);
+		RTOS::event ev = wait(m_wasProgramsFlag + m_progresFlag + m_clock);
 		if(ev == m_progresFlag)
 		{
 			CurrentStatus cs = m_progresPool.read();
