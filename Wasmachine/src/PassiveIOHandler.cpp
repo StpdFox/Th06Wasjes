@@ -17,24 +17,15 @@ PassiveIOHandler::PassiveIOHandler(const uint prio, UartComs &uc) :
     m_pumpOffFlag(this, "PumpOffFlag"),
     m_newRPMFlag(this, "NewRPMFlag"),
     m_motorRPMPool("MotorRPMPool"),
-    m_doorLock(DefaultOutput(2, 64, 128)),
-    m_heater(DefaultOutput(7, 16, 32)),
-    m_waterValve(DefaultOutput(3, 16, 32)),
-    m_signalLed(DefaultOutput(11, 16, 32)),
-    m_pump(DefaultOutput(5, 16, 32)),
-    m_motor(Motor(10))
+    m_doorLock(DefaultOutput(2, 64, 128, uc)),
+    m_heater(DefaultOutput(7, 16, 32, uc)),
+    m_waterValve(DefaultOutput(3, 16, 32, uc)),
+    m_signalLed(DefaultOutput(11, 16, 32, uc)),
+    m_pump(DefaultOutput(5, 16, 32, uc)),
+    m_motor(Motor(10, uc))
 {
-	m_uc.writeUart("\x01", "\x10");
-
-	char buf[256];
-	fcntl(m_uc.m_fd, F_SETFL, 1);
-	std::cout << "reading stuff" << std::endl;
-	int byte = read(m_uc.m_fd, (void*)buf, 255);
-
-	std::cout << "0: " << (int)buf[0] << std::endl;
-	std::cout << "1: " << (int)buf[1] << std::endl;
-
-	//m_uc.readUart();
+	if(m_uc.setRunning() == false) std::cerr << "Not running!" << std::endl;
+	else							std::cout << "running!" << std::endl;
 }
 
 void PassiveIOHandler::lockDoor()
@@ -104,64 +95,58 @@ void PassiveIOHandler::main(void)
 
 		if(ev == m_doorLockFlag)
 		{
-			std::cout << "Door locked" << std::endl;
+			if(m_doorLock.on()) std::cout << "Door locked" << std::endl;
+			else				std::cerr << "Door not locked!" << std::endl;
 		}
 		else if(ev == m_doorUnlockFlag)
 		{
-			std::cout << "Door unlocked" << std::endl;
+			if(m_doorLock.off()) std::cout << "Door unlocked" << std::endl;
+			else				std::cerr << "Door not unlocked!" << std::endl;
 		}
 		else if(ev == m_heaterOnFlag)
 		{
-			 std::cout << "Heater on" << std::endl;
+			if(m_heater.on()) std::cout << "Heater on" << std::endl;
+			else				std::cerr << "Heater not on" << std::endl;
 		}
 		else if(ev == m_heaterOffFlag)
 		{
-			std::cout << "Heater off" << std::endl;
+			if(m_heater.off()) std::cout << "Heater off" << std::endl;
+			else				std::cerr << "Heater not off" << std::endl;
 		}
 		else if(ev == m_waterValveOpenFlag)
 		{
-			m_uc.writeUart("\x03", "\x10");
-			m_uc.readUart();
-			std::cout << "Water valve open" << std::endl;
-			//sleep (1 S);
-			//std::cout << m_uc.readUart("\x06") << std::endl;
-			//std::cout << m_uc.readUart()
-			//m_uc.writeUart();
-
+			if(m_waterValve.on()) std::cout << "Water valve open" << std::endl;
+			else				std::cerr << "Water valve not open" << std::endl;
 		}
 		else if(ev == m_waterValveCloseFlag)
 		{
-			//m_uc.writeUart("\x03", "\x20");
-			std::cout << "Water valve closed" << std::endl;
+			if(m_waterValve.off()) std::cout << "Water valve closed" << std::endl;
+			else				std::cerr << "Water valve not closed" << std::endl;
 		}
 		else if(ev == m_signalLedOnFlag)
 		{
-			std::cout << "Signal led on" << std::endl;
+			if(m_signalLed.on()) std::cout << "Signal led on" << std::endl;
+			else				std::cerr << "Signal led not on" << std::endl;
 		}
 		else if(ev == m_signalLedOffFlag)
 		{
-			std::cout << "Signal led off" << std::endl;
+			if(m_signalLed.off()) std::cout << "Signal led off" << std::endl;
+			else				std::cerr << "Signal led not off" << std::endl;
 		}
 		else if(ev == m_pumpOnFlag)
 		{
-			std::cout << "Pump on" << std::endl;
+			if(m_pump.on()) std::cout << "Pump on" << std::endl;
+			else				std::cerr << "Pump not on" << std::endl;
 		}
 		else if(ev == m_pumpOffFlag)
 		{
-			std::cout << "Pump off" << std::endl;
+			if(m_pump.off()) std::cout << "Pump off" << std::endl;
+			else				std::cerr << "Pump not off" << std::endl;
 		}
 		else if(ev == m_newRPMFlag)
 		{
-			m_uc.writeUart("\x0A", "\x05");
-			std::cout << "set new RPM: " << m_motorRPMPool.read() << std::endl;
-			if(m_motorRPMPool.read() < 0)
-			{
-				m_uc.writeUart("\x0A", "\x01");
-			}
-			else
-			{
-				m_uc.writeUart("\x0A", "\x02");
-			}
+			if(m_motor.setRPM(2)) std::cout << "Motor set" << std::endl;
+			else				  std::cerr << "Motor not set" << std::endl;
 		}
 	}
 }

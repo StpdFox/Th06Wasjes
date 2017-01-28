@@ -16,10 +16,10 @@ void PeriodiekeIOHandler::main()
     while(true)
     {
         wait(m_clock);
-        sleep(500 MS);
 		for(EventSource* &es : m_evSrcs)
 		{
 			es->updateState();
+			sleep(20 MS);
 		}
     }
 }

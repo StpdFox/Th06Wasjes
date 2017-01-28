@@ -59,6 +59,7 @@ void WasProgrammaUitvoerenController::clearPhase()
 
 void WasProgrammaUitvoerenController::checkWasMachine()
 {
+	return;
 	if(m_lastPhase != m_currentPhase.phase)
 	{
 		if(m_perIOHandSuspend)

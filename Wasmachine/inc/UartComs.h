@@ -22,9 +22,10 @@ public:
 
 	int m_fd;
 
-	void writeUart(const char *command, const char *value);
-	int readUart(const uint8_t &command);
-	int readUart();
+	int writeUart(const uint8_t command, const uint8_t value);
+	int readUart(const uint8_t command);
+	bool setRunning();
+	bool setIdle();
 };
 
 

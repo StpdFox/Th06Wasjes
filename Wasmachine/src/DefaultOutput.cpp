@@ -2,18 +2,23 @@
 
 #include "DefaultOutput.h"
 
-DefaultOutput::DefaultOutput(const char startByte, const char onByte, const char offByte) :
+DefaultOutput::DefaultOutput(const uint8_t startByte, const uint8_t onByte, const uint8_t offByte, UartComs &uc) :
+	m_uc(uc),
     m_startByte(startByte),
     m_onByte(onByte),
     m_offByte(offByte)
 {}
 
-void DefaultOutput::on() const
+bool DefaultOutput::on() const
 {
-    std::cout << "On" << std::endl;
+    if(m_uc.writeUart(m_startByte, m_onByte) == -1) return false;
+
+    return true;
 }
 
-void DefaultOutput::off() const
+bool DefaultOutput::off() const
 {
-    std::cout << "Off" << std::endl;
+    if(m_uc.writeUart(m_startByte, m_offByte) == -1) return false;
+
+    return true;
 }

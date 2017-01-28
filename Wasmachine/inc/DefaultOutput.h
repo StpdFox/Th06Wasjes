@@ -1,17 +1,21 @@
 #ifndef __DefaultOutPut
 #define __DefaultOutPut
 
+#include "UartComs.h"
+
 class DefaultOutput
 {
 private:
-    char m_startByte;
-    char m_onByte;
-    char m_offByte;
+	UartComs &m_uc;
+
+	uint8_t m_startByte;
+	uint8_t m_onByte;
+	uint8_t m_offByte;
     
 public:
-    DefaultOutput(const char startByte, const char onByte, const char offByte);
-    void on() const;
-    void off() const;
+    DefaultOutput(const uint8_t startByte, const uint8_t onByte, const uint8_t offByte, UartComs &m_uc);
+    bool on() const;
+    bool off() const;
 };
 
 #endif
