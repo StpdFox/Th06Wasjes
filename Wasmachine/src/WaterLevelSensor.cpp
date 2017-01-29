@@ -1,16 +1,16 @@
 #include "WaterLevelSensor.h"
-#include <stdlib.h> //ToDo remove when rand() is removed
+#include <iostream>
+#include <unistd.h>
 
-WaterLevelSensor::WaterLevelSensor(const char reqByte) :
+WaterLevelSensor::WaterLevelSensor(const char *reqByte, UartComs &uc) :
+	m_uc(uc),
 	m_requestByte(reqByte),
 	m_wlvlListeners(nullptr)
 {}
 
 void WaterLevelSensor::readWaterLevel()
 {
-    //ToDo put here the sensor read code
-    //m_waterLevel = rand() % 15;
-    ++m_waterLevel;
+	m_waterLevel = m_uc.readUart(6);
 }
 
 void WaterLevelSensor::updateState()

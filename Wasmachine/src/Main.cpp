@@ -5,18 +5,21 @@
 #include "WaterLevelSensor.h"
 #include "WebSocket.h"
 #include "WasProBehCntr.h"
+#include "UartComs.h"
 
 int main(int argc, char** argv)
 {
-    TempSensor ts('a');
-    WaterLevelSensor wls('a');
-    
-    PeriodiekeIOHandler perIOHandler(1, 1000000);
-    
+	UartComs uc;
+
+    TempSensor ts('a', uc);
+    WaterLevelSensor wls("\x06", uc);
+
+    PeriodiekeIOHandler perIOHandler(1, 1 S);
+
     perIOHandler.addEventSource(&ts);
     perIOHandler.addEventSource(&wls);
 
-    WasProgUitvoerHandler wPUH(0, ts, wls, perIOHandler);
+    WasProgUitvoerHandler wPUH(0, ts, wls, perIOHandler, uc);
     
     //WasProBehCntr WasProgrammaBeheerController(3, wPUH);
 

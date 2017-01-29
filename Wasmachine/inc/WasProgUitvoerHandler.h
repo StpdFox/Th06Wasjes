@@ -12,6 +12,8 @@
 #include "WasProgramPhase.h"
 #include "PassiveIOHandler.h"
 
+class UartComs;
+
 class WasProgUitvoerHandler : public RTOS::task, public TempListener, public WaterLvlListener
 {
 private:
@@ -34,7 +36,7 @@ private:
 
     void main(void);
 public:
-    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PeriodiekeIOHandler &perHandler);
+    WasProgUitvoerHandler(const uint prio, TempSensor &tempSensor, WaterLevelSensor &waterLvlSensor, PeriodiekeIOHandler &perHandler, UartComs &uc);
     virtual ~WasProgUitvoerHandler();
 
     void updateTemp(TempSensor *ts);

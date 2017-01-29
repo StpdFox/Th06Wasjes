@@ -1,16 +1,15 @@
 #include "TempSensor.h"
 #include <stdlib.h> //ToDo remove when rand() is removed
 
-TempSensor::TempSensor(const char reqByte) :
+TempSensor::TempSensor(const char reqByte, UartComs &uc) :
+	m_uc(uc),
 	m_reqByte(reqByte),
 	m_listener(nullptr)
 {}
 
 void TempSensor::readTemp()
 {
-    //ToDo put here the sensor read code
-    //m_temp = rand() % 100;
-    ++m_temp;
+	m_temp = m_uc.readUart(8);
 }
 
 void TempSensor::updateState()

@@ -19,6 +19,7 @@ void PeriodiekeIOHandler::main()
 		for(EventSource* &es : m_evSrcs)
 		{
 			es->updateState();
+			sleep(20 MS);
 		}
     }
 }

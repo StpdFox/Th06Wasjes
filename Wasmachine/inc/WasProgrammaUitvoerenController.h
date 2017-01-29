@@ -7,6 +7,7 @@
 #include "Logger.h"
 
 class WasProgUitvoerHandler;
+class UartComs;
 
 class WasProgrammaUitvoerenController
 {
@@ -24,7 +25,7 @@ private:
     bool m_heaterOn = false;
     bool m_waterValveOpen = false;
     bool m_pumpOn = false;
-    int m_currentRPM = 0;
+    uint8_t m_currentRPM = 0;
     
     bool m_perIOHandSuspend = true;
 
@@ -36,7 +37,7 @@ private:
 
     void clearPhase();
 public:
-    WasProgrammaUitvoerenController(WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler);
+    WasProgrammaUitvoerenController(WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler, UartComs &uc);
     void setNewPhase(const WasProgramPhase &wProgPhase);
     void setNewTemp(const uint);
     void setNewWLvl(const uint);

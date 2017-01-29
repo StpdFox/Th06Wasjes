@@ -2,10 +2,14 @@
 
 #include "Motor.h"
 
-Motor::Motor(const char startByte) : m_startByte(startByte)
+Motor::Motor(const char startByte, UartComs &uc) :
+	m_uc(uc),
+	m_startByte(startByte)
 {}
 
-void Motor::setRPM(const uint RPM)
+bool Motor::setRPM(const uint8_t RPM)
 {
-    std::cout << "set RPM to: " << RPM << std::endl;
+	if(m_uc.writeUart(m_startByte, RPM) == -1) return false;
+
+	return true;
 }
