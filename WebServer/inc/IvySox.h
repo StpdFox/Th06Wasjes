@@ -72,11 +72,12 @@ class InboundConnection
     int receive(void *message, ssize_t maxLength);
     int sendFile(string filename);
     int sendMessage(string message);
-    int sendMessage(void *message, ssize_t length);
+    int sendMessage(const void *message, ssize_t length);
     int sendPartial(void *message, ssize_t length);
     unsigned short int getPortNumber();
     void closeConnection();
     string getIpAddress();
+    size_t sendWasprogrammas(const std::string fileName, const std::string &wasProgrammas);
 
 };
 
@@ -122,7 +123,6 @@ class IvySox
     //               socklen_t inboundConnectionStructSizeIn);
 
     string messageToString(char *message, int length);
-
 
     private:
 

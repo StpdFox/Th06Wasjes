@@ -132,7 +132,7 @@ int OliWeb::run()
 int OliWeb::fetchFile(InboundRequest *request)
 {
     string requestedFile = request->requestedFile;
-
+    std::cout << "site: " << requestedFile << std::endl;
     pthread_mutex_lock(&ivySoxMutex);
 
     writeLog("Fetching " + requestedFile, true, medium);
@@ -156,6 +156,45 @@ int OliWeb::fetchFile(InboundRequest *request)
     {
         //writeLog("Sending " + requestedFile, false);
         bytesSent = (request->inbound).sendFile(requestedFile);
+        writeLog("Sent " + toString(bytesSent) + " bytes.", true, medium);
+    } else {
+        writeLog("Error parsing for file name.", true, low);
+    }
+
+    pthread_mutex_unlock(&ivySoxMutex);
+    return bytesSent;
+}
+
+int OliWeb::fetchFileAndFifo(InboundRequest *request)
+{
+    string requestedFile = request->requestedFile;
+    std::cout << "site: " << requestedFile << std::endl;
+    pthread_mutex_lock(&ivySoxMutex);
+
+    writeLog("Fetching " + requestedFile, true, medium);
+
+    // Check to see if requested file exists
+    ifstream reqFileStream(requestedFile.c_str());
+    if (reqFileStream.good())
+    {
+        sendStatusOk(request);
+        reqFileStream.close();
+    } else {
+        // Finally, drop a 404
+        sendStatusNotFound(request);
+        writeLog("File not found, sending 404", true, low);
+        requestedFile = rootFileDirectory + "/" + fileNotFoundPage;
+    }
+
+    //  Send file if it exists
+    int bytesSent = -1;
+    if (requestedFile != "")
+    {
+        //writeLog("Sending " + requestedFile, false);
+    	writeFifo("GET");
+    	std::string message = readFifo();
+
+        bytesSent = (request->inbound).sendWasprogrammas(requestedFile, message);
         writeLog("Sent " + toString(bytesSent) + " bytes.", true, medium);
     } else {
         writeLog("Error parsing for file name.", true, low);
@@ -243,12 +282,13 @@ void OliWeb::invoke(InboundRequest *request, const string &cmd,
     //int returnValue = system(cmd.c_str());
     //sleep(1);
 
-    if(request->requestedFile == "/HelloWorld.cgi")
-    {
-    	writeFifo("GET");
-//    	std::cout << "message from was: " << readFifo() << std::endl;
-    	sendWasprogrammas(request, readFifo());
-    }
+//    if(request->requestedFile == "/HelloWorld.cgi")
+//    {
+//    	writeFifo("GET");
+////    	std::cout << "message from was: " << readFifo() << std::endl;
+//    	std::string message = readFifo();
+//    	(request->inbound).sendWasprogrammas(("cgi-bin" + request->requestedFile), message);
+//    }
 
     pid_t processId = fork();
     int returnValue = 0;
@@ -341,6 +381,11 @@ bool OliWeb::isPython(const string &str)
         return true;
     return false;
 }
+bool OliWeb::isWasProgrammas(const string &str)
+{
+    if (str.find("wasprogrammas.html?wp=") != string::npos) return true;
+    return false;
+}
 
 bool OliWeb::isHtml(const string &str)
 {
@@ -413,6 +458,16 @@ void OliWeb::threadRequestHandler(InboundRequest *request)
     else if (isPython(request->requestedFile))
     {
         invokePython(request);
+    }
+    else if(isWasProgrammas(request->requestedFile))
+    {
+    	std::cout << "start ding" << std::endl;
+    	startWProg(request);
+    }
+    else if(request->requestedFile == "/wasprogrammas.html")
+    {
+    	request->requestedFile = rootFileDirectory + request->requestedFile;
+    	fetchFileAndFifo(request);
     }
     else {
         request->requestedFile = rootFileDirectory + request->requestedFile;
@@ -675,11 +730,9 @@ void OliWeb::parseLogLevelString(const string &logLevelString)
 
 void OliWeb::writeFifo(const std::string &message)
 {
-	if(wFifo == -1)
-	{
-		wFifo = open("/tmp/Wachmachine", O_WRONLY);
-	}
+	wFifo = open("/tmp/Wachmachine", O_WRONLY);
 	write(wFifo, message.c_str(), message.size());
+	close(wFifo);
 }
 
 std::string OliWeb::readFifo()
@@ -697,12 +750,15 @@ std::string OliWeb::readFifo()
 	return std::string(buff);
 }
 
-void OliWeb::sendWasprogrammas(const InboundRequest *request, const std::string &wasProgrammas)
+void OliWeb::startWProg(InboundRequest *request)
 {
-
+	std::string url = request->requestedFile;
+	unsigned place = url.find("=");
+	std::string number = url.substr(++place, 1);
+	std::cout << number << std::endl;
+	writeFifo(("Start," + number));
+	std::cout << "sending: " << ("Start," + number) << std::endl;
 }
-
-
 
 
 

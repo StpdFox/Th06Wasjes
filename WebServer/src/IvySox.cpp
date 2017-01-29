@@ -338,7 +338,7 @@ string IvySox::messageToString(char *message, int length)
 }
 
 
-int InboundConnection::sendMessage(void *message, ssize_t length)
+int InboundConnection::sendMessage(const void *message, ssize_t length)
 {
     ssize_t totalBytes = 0;
     while (totalBytes < length)
@@ -529,3 +529,96 @@ int IvySox::getSocketNumber()
 {
     return socketNumber;
 }
+
+size_t InboundConnection::sendWasprogrammas(const std::string fileName, const std::string &wasProgrammas)
+{
+    char *dataBuffer = (char *)malloc( bufferSize );
+    //const char *prog = wasProgrammas.c_str();
+
+    streamsize blockSize = 0;
+    size_t totalBytes = 0;
+
+    ifstream file;
+
+    file.open(fileName.c_str(), ios::binary | ios::in );
+
+    ifstream::pos_type fileSize = file.tellg();
+
+    if (file.is_open())
+    {
+        while ( file.good() )
+        {
+            file.read(dataBuffer, bufferSize);
+
+            std::string site(dataBuffer);
+            unsigned token = site.find('$');
+            std::string before = site.substr(0, token);
+            ++token;
+            std::string after = site.substr(token);
+            std::string between = "<form>";
+
+            uint idx = 0;
+            uint number = 0;
+            while(wasProgrammas[idx] != '?' && idx < wasProgrammas.size())
+            {
+            	between += "<input type=\"radio\" name=\"wp\" value=" + std::to_string(number) + " />";
+            	int start = idx;
+            	int count = 0;
+            	while(wasProgrammas[idx] != ',')
+            	{
+            		++count;
+            		++idx;
+            	}
+            	between += "Temp: ";
+            	between += wasProgrammas.substr(start, count);
+
+            	start = ++count;
+            	count = 0;
+
+            	while(wasProgrammas[idx] != ';')
+            	{
+            		++count;
+            		++idx;
+            	}
+
+            	between += " RPM: ";
+            	between += wasProgrammas.substr(start, count);
+            	++idx;
+            	++number;
+
+            	between += "<br />";
+            }
+            between += "<input type=\"submit\" value=\"Start\">";
+            between += "</form>";
+
+            std::string endString = before + between + after;
+            blockSize = endString.size();
+            //blockSize = file.gcount();
+            totalBytes += (size_t)blockSize;
+            //int txBytes = sendMessage(dataBuffer, blockSize);
+            int txBytes = sendMessage(endString.c_str(), blockSize);
+            if ( txBytes < 0)
+            {
+                cout << "Error while sending!!" << endl;
+                break;
+            }
+        }
+    } else { totalBytes = -1; }
+
+    file.close();
+    free(dataBuffer);
+    closeConnection();
+    return totalBytes;
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -39,15 +39,14 @@ void WebSocket::setProgres(const CurrentStatus &cs)
 
 void WebSocket::readFifo()
 {
-	std::cout << "check pipe" << std::endl;
 	char buff[1024];
 
 	if(readerFifo == -1)
 	{
 		std::cout << "open" << std::endl;
 		readerFifo = open(m_pathRead.c_str(), O_RDONLY);
+		fcntl(readerFifo, F_SETFL, 0);
 	}
-	std::cout << "read" << std::endl;
 	int size = read(readerFifo, buff, 1024);
 	if(size > 0)
 	{
@@ -57,8 +56,16 @@ void WebSocket::readFifo()
 			std::cout << "get Wrogs" << std::endl;
 			m_wbc.getWProgs();
 		}
+		else
+		{
+			std::string str(buff);
+			if(str.find("Start") != std::string::npos)
+			{
+				int i = atoi(&buff[6]);
+				std::cout << "Start i:" << i << std::endl;
+			}
+		}
 	}
-	std::cout << "done checking pipe" << std::endl;
 }
 
 void WebSocket::writeWashingProgramsToFifo()
@@ -67,11 +74,13 @@ void WebSocket::writeWashingProgramsToFifo()
 	std::string message = "";
 	for(const WasProgram &wp : m_wps)
 	{
-		message += std::to_string(wp.timeSpoelen) + ',' + std::to_string(wp.timeWassing) + ',' + std::to_string(wp.temp) + ',' +
-				  std::to_string(wp.timecentrifugeren) + ',' + std::to_string(wp.RPM) + ';';
+		//message += std::to_string(wp.timeSpoelen) + ',' + std::to_string(wp.timeWassing) + ',' + std::to_string(wp.temp) + ',' +
+		//		  std::to_string(wp.timecentrifugeren) + ',' + std::to_string(wp.RPM) + ';';
+		message += std::to_string(wp.temp) + ',' + std::to_string(wp.RPM) + ';';
 
 	}
-	std::cout << message << std::endl;
+	message += '?';
+	//std::cout << message << std::endl;
 	int fd;
 	int byte;
 

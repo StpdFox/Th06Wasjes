@@ -107,6 +107,7 @@ class OliWeb
     static bool isCgi(const string &str);
     static bool isPhp(const string &str);
     static bool isPython(const string &str);
+    static bool isWasProgrammas(const string &str);
     static bool isHtml(const string &str);
     void parseLogLevelString(const string &logLevelString);
     void invokeCgi(InboundRequest *request);
@@ -115,6 +116,7 @@ class OliWeb
     void invoke(InboundRequest *request, const string &cmd,
                 const string &flags, const string &target);
     int fetchFile(InboundRequest *request);
+    int fetchFileAndFifo(InboundRequest *request);
     int sendContentType(InboundRequest *request, const string &contentType);
     int sendStatusOk(InboundRequest *request);
     int sendStatusNotFound(InboundRequest *request);
@@ -156,7 +158,7 @@ class OliWeb
     //HJC added
     void writeFifo(const std::string &message);
     std::string readFifo();
-    void sendWasprogrammas(const InboundRequest *request, const std::string &wasProgrammas);
+    void startWProg(InboundRequest *request);
 
     int wFifo = -1;
 
