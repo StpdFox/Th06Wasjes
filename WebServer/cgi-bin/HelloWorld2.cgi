@@ -1,0 +1,36 @@
+<html>
+
+	<head>
+		<title>Userinterface Wasmachine</title>
+		<meta charset=utf-8>
+		<meta name="description" content="Wasmachine userinterface">
+		<meta name="author" content="Marianne Delmaar, Hendrik Cornelisse, Matthijs Vos">
+		<link href="main.css" rel="stylesheet" type="text/css">
+	</head>
+	
+	<body>
+	
+		<img id=banner src="images/wasmachine.jpg" alt="Banner">
+	
+		<div id=nav>
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="inloggen.html">Inloggen</a></li>
+				<li><a href="wasprogrammas.html"class="selected">Wasprogramma's</a></li>
+				<li><a href="loggegevens.html">Loggegevens</a></li>
+				<li><a href="contact.html">Contact</a></li>
+			</ul>
+		</div>		
+		<div id=title>
+			<h1>Wasprogramma's</h1>
+		</div>
+		
+		<div id=content>
+			$
+			<p>Wasprogramma's aanpassen</p>
+			
+		</div>
+		
+	</body>
+
+</html>
