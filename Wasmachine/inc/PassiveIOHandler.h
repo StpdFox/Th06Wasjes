@@ -22,7 +22,7 @@ private:
     RTOS::flag m_pumpOnFlag;
     RTOS::flag m_pumpOffFlag;
     RTOS::flag m_newRPMFlag;
-    RTOS::pool<int> m_motorRPMPool;
+    RTOS::pool<uint8_t> m_motorRPMPool;
     
     DefaultOutput m_doorLock;
     DefaultOutput m_heater;
@@ -44,7 +44,7 @@ public:
     void closeWaterValve();
     void signalLedOn();
     void signalLedOff();
-    void setMotoRPM(const int RPM);
+    void setMotoRPM(const uint8_t RPM);
     void pumpOn();
     void pumpOff();
 };

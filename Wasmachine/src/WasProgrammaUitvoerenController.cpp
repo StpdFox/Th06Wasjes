@@ -59,7 +59,7 @@ void WasProgrammaUitvoerenController::clearPhase()
 
 void WasProgrammaUitvoerenController::checkWasMachine()
 {
-	return;
+//	return;
 	if(m_lastPhase != m_currentPhase.phase)
 	{
 		if(m_perIOHandSuspend)
@@ -85,7 +85,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 		}
 		else if(m_currentPhase.phase == SPOELEN)
 		{
-			m_currentRPM = 100;
+			m_currentRPM = 1;
 			//m_logger.write("Phase if SPOELEN");
 			if(m_perIOHandSuspend)
 			{
@@ -112,7 +112,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 				if(m_changeMoter)
 				{
 				   if(m_spinLeft) 	m_pasIOHandler.setMotoRPM(m_currentRPM);
-				   else				m_pasIOHandler.setMotoRPM(m_currentRPM * -1);
+				   else				m_pasIOHandler.setMotoRPM(m_currentRPM + 128);
 				   m_changeMoter = false;
 				   m_wPUH.setWCUTimer(5 S);
 				}
@@ -120,7 +120,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 		}
 		else if(m_currentPhase.phase == WASSEN)
 		{
-			m_currentRPM = 100;
+			m_currentRPM = 1;
 			//m_logger.write("Phase if WASSEN");
 			if(m_perIOHandSuspend)
 			{
@@ -162,7 +162,7 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 					else if(m_changeMoter)
 					{
 					   if(m_spinLeft) 	m_pasIOHandler.setMotoRPM(m_currentRPM);
-					   else				m_pasIOHandler.setMotoRPM(m_currentRPM * -1);
+					   else				m_pasIOHandler.setMotoRPM(m_currentRPM + 128);
 					   m_changeMoter = false;
 					   m_wPUH.setWCUTimer(5 S);
 					}

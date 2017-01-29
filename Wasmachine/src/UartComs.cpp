@@ -9,95 +9,74 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "UartComs.h"
 
 UartComs::UartComs()
 {
-//	m_fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
-//	if(m_fd == -1)
-//	{
-//		std::cout << "Unable to open port" << std::endl;
-//	}
-//	else
-//	{
-//		std::cout << "Port open" << std::endl;
-//		configure();
-//	}
+	m_fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+	if(m_fd == -1)
+	{
+		std::cout << "Unable to open port" << std::endl;
+	}
+	else
+	{
+		std::cout << "Port open" << std::endl;
+		configure();
+	}
 }
 
 void UartComs::configure()
 {
-	struct termios port_settings;
+    struct termios tty;
+    memset (&tty, 0, sizeof tty);
 
-	cfsetispeed(&port_settings, B9600);
-	cfsetospeed(&port_settings, B9600);
+    cfsetospeed (&tty, B9600);
+    cfsetispeed (&tty, B9600);
 
+    tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
+    // disable IGNBRK for mismatched speed tests; otherwise receive break
+    // as \000 chars
+    tty.c_iflag &= ~IGNBRK;         // disable break processing
+    tty.c_lflag = 0;                // no signaling chars, no echo,
+                                    // no canonical processing
+    tty.c_oflag = 0;                // no remapping, no delays
+    tty.c_cc[VMIN]  = 0;            // read doesn't block
+    tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
 
-	port_settings.c_cflag &= ~PARENB;    // set no parity, stop bits, data bits
-	port_settings.c_cflag &= ~CSTOPB;
-	port_settings.c_cflag &= ~CSIZE;
-	port_settings.c_cflag |= CS8;
+    tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
 
-	tcsetattr(m_fd, TCSANOW, &port_settings);
-	fcntl(m_fd, F_SETFL, 1);
+    tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
+                                    // enable reading
+    tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
+    tty.c_cflag |= 0;
+    tty.c_cflag &= ~CSTOPB;
+    tty.c_cflag &= ~CRTSCTS;
+
+    tcsetattr (m_fd, TCSANOW, &tty);
+
+    fcntl(m_fd, F_SETFL, 0);
 }
 
 int UartComs::writeUart(const uint8_t command, const uint8_t value)
 {
-//	int n;
-//	n = write(m_fd, &command, 1);
-//	n = write(m_fd, &value, 1);
-//	if(n == -1) return -1;
-//	std::cout << "N: " << n << std::endl;
-//	sleep(0.01);
-//
-//	std::cout << "reading" << std::endl;
-//	char buf[256];
-//	int byte = read(m_fd, (void*)buf, 255);
-//	std::cout << "Byte: " << byte << std::endl;
-//
-//	if(n == -1) return -1;
-//
-//	std::cout << "responds: " << (int)buf[1] << std::endl;
-//	return (int)buf[1];
+	int n;
+	n = write(m_fd, &command, 1);
+	n = write(m_fd, &value, 1);
+	if(n == -1) return -1;
+	std::cout << "N: " << n << std::endl;
+	sleep(0.01);
 
-    std::cout << "doing stuff" << std::endl;
-    int fd = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);
+	std::cout << "reading" << std::endl;
+	char buf[256];
+	int byte = read(m_fd, (void*)buf, 255);
+	std::cout << "Byte: " << byte << std::endl;
 
-    struct termios port_settings;
+	if(n == -1) return -1;
 
-    cfsetispeed(&port_settings, B9600);
-    cfsetospeed(&port_settings, B9600);
-
-
-    port_settings.c_cflag &= ~PARENB;    // set no parity, stop bits, data bits
-    port_settings.c_cflag &= ~CSTOPB;
-    port_settings.c_cflag &= ~CSIZE;
-    port_settings.c_cflag |= CS8;
-
-    tcsetattr(fd, TCSANOW, &port_settings);
-
-    fcntl(fd, F_SETFL, 10);
-    std::cout << "going to write" << std::endl;
-    uint8_t request = 1;
-    uint8_t command2 = 16;
-    char buf[256];
-    int byte = 0;
-
-    write(fd, &request, 1);
-    std::cout << "going to write" << std::endl;
-    write(fd, &command2, 1);
-
-    sleep(0.001);
-
-    byte = read(fd, (void*)buf, 255);
-    std::cout << "byte: " << byte << std::endl;
-    std::cout << "buf: " << buf << std::endl;
-    printf("[0]: %x\n", buf[0]);
-    printf("[1]: %x\n", buf[1]);
-
-
+	std::cout << "responds: " << (int)buf[1] << std::endl;
+	return (int)buf[1];
 }
 
 int UartComs::readUart(const uint8_t request)

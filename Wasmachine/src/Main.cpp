@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 {
 	 UartComs uc;
 
-    TempSensor ts('a');
+    TempSensor ts('a', uc);
     WaterLevelSensor wls("\x06", uc);
 
     PeriodiekeIOHandler perIOHandler(1, 1 S);

@@ -4,10 +4,13 @@
 #include "TempListener.h"
 #include "EventSource.h"
 #include <sys/types.h>
+#include "UartComs.h"
 
 class TempSensor : public EventSource
 {
 private:
+	UartComs &m_uc;
+
     char m_reqByte;
     uint m_temp = 0;
     TempListener *m_listener;
@@ -15,7 +18,7 @@ private:
     void readTemp();
     
 public:
-    TempSensor(const char reqByte);
+    TempSensor(const char reqByte, UartComs &uc);
     virtual ~TempSensor();
 
     void updateState();

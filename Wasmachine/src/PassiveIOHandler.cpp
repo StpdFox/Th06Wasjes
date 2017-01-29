@@ -70,7 +70,7 @@ void PassiveIOHandler::signalLedOff()
     set(m_signalLedOffFlag);
 }
 
-void PassiveIOHandler::setMotoRPM(const int RPM)
+void PassiveIOHandler::setMotoRPM(const uint8_t RPM)
 {
     m_motorRPMPool.write(RPM);
     set(m_newRPMFlag);
@@ -145,7 +145,7 @@ void PassiveIOHandler::main(void)
 		}
 		else if(ev == m_newRPMFlag)
 		{
-			if(m_motor.setRPM(2)) std::cout << "Motor set" << std::endl;
+			if(m_motor.setRPM(m_motorRPMPool.read())) std::cout << "Motor set" << std::endl;
 			else				  std::cerr << "Motor not set" << std::endl;
 		}
 	}
