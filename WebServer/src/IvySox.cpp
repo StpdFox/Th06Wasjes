@@ -561,7 +561,7 @@ size_t InboundConnection::sendWasprogrammas(const std::string fileName, const st
             uint number = 0;
             while(wasProgrammas[idx] != '?' && idx < wasProgrammas.size())
             {
-            	between += "<input type=\"radio\" name=\"wp\" value=" + std::to_string(number) + " />";
+            	between += "<input type=\"radio\" name=\"wp\" value=" + std::to_string(number) + " checked=\"checked\"/>";
             	int start = idx;
             	int count = 0;
             	while(wasProgrammas[idx] != ',')
@@ -572,7 +572,7 @@ size_t InboundConnection::sendWasprogrammas(const std::string fileName, const st
             	between += "Temp: ";
             	between += wasProgrammas.substr(start, count);
 
-            	start = ++count;
+            	start = ++idx;
             	count = 0;
 
             	while(wasProgrammas[idx] != ';')
@@ -581,14 +581,19 @@ size_t InboundConnection::sendWasprogrammas(const std::string fileName, const st
             		++idx;
             	}
 
+            	std::cout << "start: " << start << std::endl;
+            	std::cout << "RPM: " << wasProgrammas.substr(start, count) << std::endl;
+
             	between += " RPM: ";
             	between += wasProgrammas.substr(start, count);
             	++idx;
             	++number;
 
+            	count = 0;
+
             	between += "<br />";
             }
-            between += "<input type=\"submit\" value=\"Start\">";
+            between += "<input type=\"button\" value=\"Start\" onClick=\"herhalendeFunctie();\">";
             between += "</form>";
 
             std::string endString = before + between + after;

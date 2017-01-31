@@ -29,7 +29,7 @@ private:
 	RTOS::flag m_getWProgsFlag;
 
 	RTOS::mailbox<WasProgram> m_startWProgBox;
-	RTOS::mailbox<WasProgram> m_setWProgBox;
+	RTOS::pool<WasProgram> m_setWProgBox;
 	RTOS::mailbox<WasProgram> m_deleteWProgBox;
 
 	RTOS::timer m_phaseTimer;

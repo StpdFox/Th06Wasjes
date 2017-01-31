@@ -30,6 +30,7 @@ void WasProgXml::saveXML()
 
 void WasProgXml::addNewWashProgram(const WasProgram &wp)
 {
+	std::cout << "adding" << std::endl;
 	++m_currentNumberOfWashPrograms;
 	m_rootNode.attribute("N") = m_currentNumberOfWashPrograms;
 	Node newWashingNode = m_rootNode.append_child("Washing");
@@ -45,6 +46,7 @@ void WasProgXml::addNewWashProgram(const WasProgram &wp)
 	newSpinNode.append_attribute("Time") = wp.timecentrifugeren;
 	newSpinNode.append_attribute("RPM") = wp.RPM;
 	saveXML();
+	std::cout << "save" << std::endl;
 }
 
 std::vector<WasProgram> WasProgXml::getWashingPrograms() const

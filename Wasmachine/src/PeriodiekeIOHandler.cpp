@@ -12,7 +12,7 @@ void PeriodiekeIOHandler::addEventSource(EventSource *ev)
 
 void PeriodiekeIOHandler::main()
 {
-	suspend();
+	//suspend();
     while(true)
     {
         wait(m_clock);

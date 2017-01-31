@@ -33,6 +33,7 @@ SOFTWARE.
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <chrono>
 
 using namespace std;
 using namespace tinyxml2;
@@ -52,7 +53,8 @@ OliWeb::OliWeb()
     configFileName=OLIWEB_CONFIG;
     configXml();
     openLogFile();
-    mkfifo("/tmp/Wachmachine", 0666);
+    //mkfifo("/tmp/Wachmachine", 0666);
+    mknod("/tmp/Wachmachine", S_IFIFO|0666,0);
 }
 
 OliWeb::OliWeb(const string &config)
@@ -61,7 +63,7 @@ OliWeb::OliWeb(const string &config)
     configFileName=config;
     configXml();
     openLogFile();
-    mkfifo("/tmp/Wachmachine", 0666);
+   // mkfifo("/tmp/Wachmachine", 0666);
 }
 
 OliWeb::~OliWeb()
@@ -191,8 +193,12 @@ int OliWeb::fetchFileAndFifo(InboundRequest *request)
     if (requestedFile != "")
     {
         //writeLog("Sending " + requestedFile, false);
+    	auto startProcess = std::chrono::steady_clock::now();
     	writeFifo("GET");
     	std::string message = readFifo();
+    	auto diffProcess = std::chrono::steady_clock::now() - startProcess;
+    	std::cout << "time: " << std::chrono::duration <double, std::milli> (diffProcess).count() << " ms" << std::endl;
+    	std::cout << "message: " << message << std::endl;
 
         bytesSent = (request->inbound).sendWasprogrammas(requestedFile, message);
         writeLog("Sent " + toString(bytesSent) + " bytes.", true, medium);
@@ -388,6 +394,12 @@ bool OliWeb::isWasProgrammas(const string &str)
     return false;
 }
 
+bool OliWeb::isToevoegen(const string &str)
+{
+	if (str.find("wasprogrammas.html?temp=") != string::npos) return true;
+		return false;
+}
+
 bool OliWeb::isHtml(const string &str)
 {
     if (str.find(".html") != string::npos ||
@@ -467,8 +479,17 @@ void OliWeb::threadRequestHandler(InboundRequest *request)
     }
     else if(request->requestedFile == "/wasprogrammas.html")
     {
-    	request->requestedFile = rootFileDirectory + request->requestedFile;
-    	fetchFileAndFifo(request);
+    	std::cout << "normal" << std::endl;
+		request->requestedFile = rootFileDirectory + request->requestedFile;
+		fetchFileAndFifo(request);
+    }
+    else if(isToevoegen(request->requestedFile))
+    {
+    	std::cout << "sending" << std::endl;
+    	sendNewWashProg(request);
+//    	sleep(5);
+//    	request->requestedFile = rootFileDirectory + "/wasprogrammas.html";
+//    	fetchFileAndFifo(request);
     }
     else {
         request->requestedFile = rootFileDirectory + request->requestedFile;
@@ -732,6 +753,7 @@ void OliWeb::parseLogLevelString(const string &logLevelString)
 void OliWeb::writeFifo(const std::string &message)
 {
 	wFifo = open("/tmp/Wachmachine", O_WRONLY);
+	std::cout << "Message: " << message << std::endl;
 	write(wFifo, message.c_str(), message.size());
 	close(wFifo);
 }
@@ -761,7 +783,27 @@ void OliWeb::startWProg(InboundRequest *request)
 	std::cout << "sending: " << ("Start," + number) << std::endl;
 }
 
+void OliWeb::sendNewWashProg(InboundRequest *request)
+{
+	std::string url = request->requestedFile;
+	unsigned place = url.find("=");
+	++place;
+	unsigned start = place;
+	unsigned count = 0;
 
+	while(url[place] != '&')
+	{
+		++place;
+		++count;
+	}
+
+	std::string temp = url.substr(start, count);
+
+	place = url.find("rpm=");
+	place += 4;
+	std::string rpm = url.substr(place);
+	writeFifo(("NewWProg," + temp + ',' + rpm));
+}
 
 
 

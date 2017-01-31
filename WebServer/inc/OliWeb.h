@@ -109,6 +109,7 @@ class OliWeb
     static bool isPython(const string &str);
     static bool isWasProgrammas(const string &str);
     static bool isHtml(const string &str);
+    static bool isToevoegen(const string &str);
     void parseLogLevelString(const string &logLevelString);
     void invokeCgi(InboundRequest *request);
     void invokePhp(InboundRequest *request);
@@ -117,6 +118,7 @@ class OliWeb
                 const string &flags, const string &target);
     int fetchFile(InboundRequest *request);
     int fetchFileAndFifo(InboundRequest *request);
+    void sendNewWashProg(InboundRequest *request);
     int sendContentType(InboundRequest *request, const string &contentType);
     int sendStatusOk(InboundRequest *request);
     int sendStatusNotFound(InboundRequest *request);

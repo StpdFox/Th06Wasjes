@@ -46,8 +46,10 @@ void WasProBehCntr::startWProg(const WasProgram &wp)
 
 void WasProBehCntr::setWProg(const WasProgram &wp)
 {
+	std::cout << "set" << std::endl;
 	m_setWProgBox.write(wp);
 	m_setNewWProgFlag.set();
+	std::cout << "done set" << std::endl;
 }
 
 void WasProBehCntr::deleteWProg(const WasProgram &wp)
@@ -139,6 +141,7 @@ void WasProBehCntr::main(void)
 		else if(ev == m_setNewWProgFlag)
 		{
 			m_wpx.addNewWashProgram(m_setWProgBox.read());
+			std::cout << "flag" << std::endl;
 		}
 		else if(ev == m_deleteWProgFlag)
 		{

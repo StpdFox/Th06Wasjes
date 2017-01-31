@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fstream>
 
 #include "WebSocket.h"
 #include "WasProgram.h"
@@ -39,30 +40,56 @@ void WebSocket::setProgres(const CurrentStatus &cs)
 
 void WebSocket::readFifo()
 {
-	char buff[1024];
-
+	char buff[256]{0};
+	std::cout << "reading" << std::endl;
 	if(readerFifo == -1)
 	{
 		std::cout << "open" << std::endl;
 		readerFifo = open(m_pathRead.c_str(), O_RDONLY);
-		fcntl(readerFifo, F_SETFL, 0);
 	}
-	int size = read(readerFifo, buff, 1024);
+
+	int size = read(readerFifo, buff, 256);
+
 	if(size > 0)
 	{
+		//fgets(buff, 256, fp);
+//		std::cout << "line: " << line << std::endl;
 		std::cout << "buff: " << buff << std::endl;
-		if(strcmp(buff, "GET") == 0)
+		std::string str(buff);
+		if(str.find("GETNewWProg") != std::string::npos)
+		{
+			unsigned i = str.find(",");
+			unsigned start = ++i;
+			unsigned count = 0;
+			while(str[i] != ',')
+			{
+				++i;
+				++count;
+			}
+			std::string temp = str.substr(start, count);
+			std::cout << "temp: " << temp << std::endl;
+			std::string rpm = str.substr(++i);
+			std::cout << "rpm: " << rpm << std::endl;
+			WasProgram wp;
+			wp.RPM = atoi(rpm.c_str());
+			wp.temp = atoi(temp.c_str());
+			wp.timeSpoelen = 600;
+			wp.timeWassing = 3000;
+			wp.timecentrifugeren = 600;
+			m_wbc.setWProg(wp);
+		}
+		else if(str.find("GET") != std::string::npos)
 		{
 			std::cout << "get Wrogs" << std::endl;
 			m_wbc.getWProgs();
 		}
-		else
+		else if(str.find("Start") != std::string::npos)
 		{
-			std::string str(buff);
-			if(str.find("Start") != std::string::npos)
+			uint i = atoi(&buff[6]);
+			std::cout << "Start i:" << i << std::endl;
+			if(m_wps.size() >= i)
 			{
-				int i = atoi(&buff[6]);
-				std::cout << "Start i:" << i << std::endl;
+				m_wbc.startWProg(m_wps[i]);
 			}
 		}
 	}
@@ -101,16 +128,23 @@ void WebSocket::main(void)
 		if(ev == m_progresFlag)
 		{
 			CurrentStatus cs = m_progresPool.read();
-			std::cout << "Time remaining: " << cs.timeRemaining << std::endl;
+			std::ofstream file;
+			file.open("/home/hendrik/Documents/status.txt");
+			if(cs.phase == NONE)			file << "Phase Done.";
+			if(cs.phase == WASSEN)			file << "Phase Wassen. Time remaining: " << std::to_string(cs.timeRemaining / 60);
+			if(cs.phase == SPOELEN)			file << "Phase Spoelen. Time remaining: " << std::to_string(cs.timeRemaining / 60);
+			if(cs.phase == CENTRIFUGEREN)	file << "Phase Centrifugeren. Time remaining: " << std::to_string(cs.timeRemaining / 60);
+			file.close();
+			std::cout << "updating file" << std::endl;
 		}
 		else if(ev == m_wasProgramsFlag)
 		{
 			m_wps = m_wasProgramsPool.read();
 			writeWashingProgramsToFifo();
-			if(m_wps.size() >= 1)
-			{
-				m_wbc.startWProg(m_wps[0]);
-			}
+			//if(m_wps.size() >= 1)
+			//{
+			//	m_wbc.startWProg(m_wps[0]);
+			//}
 		}
 		else if(ev == m_checkPipe)
 		{
