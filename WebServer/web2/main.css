@@ -1,0 +1,304 @@
+/* Algemene lay-out */
+body {
+background-color : #FFFFFF;
+font-family : calibri;
+}
+
+#banner {
+position : absolute;
+display : block;
+top : 3px;
+left : -8px;
+}
+
+/* Navigatiemenu */
+#nav{
+position : absolute;
+left : 55px; 				
+top : 149px; 					
+}
+
+#nav ul {
+list-style : none;
+width : 1000px;
+font-size : 17px;
+font-weight : bold;
+background-color : #FFFFFF;
+}
+
+#nav li {
+display : block;
+float : left;
+}
+
+#nav li a{
+background : #FFFFFF;
+border : 2px black solid;
+padding : 13px 10px 13px 10px;
+text-align : center;
+margin-right : 10px;
+width : 160px;
+float : left;
+text-decoration : none;
+color : #000000;
+}
+
+#nav li a:hover {
+background-color : #BABABA;
+}
+
+#nav li .selected {
+background-color : #BABABA;
+}
+
+/* Titel */
+#title{
+position : absolute;
+width : 960px;
+height : 135px;
+top : 223px;
+left : 97px;
+float : left;
+clear : left;
+background : #ECEBEB;
+}
+
+#title h1{
+margin-left : 30px;
+font-size : 50;
+}
+#title div{
+display: block;
+}
+#ingelogd{
+display: none;
+}
+
+#login {
+position : absolute;
+display : block;
+left : 55px;
+top : 15px;
+}
+
+.loggingIn{
+	display: block;
+}
+/*.loggedIn{
+	visibility: hidden;
+}
+*/
+
+
+/* Content */
+#content{
+width : 931px;
+height : 300px;
+position : absolute;
+left : 130px;
+top : 355px;
+}
+
+#content p a {
+text-decoration : none;
+}
+
+#contentInlog{
+width : 931px;
+height : 300px;
+position : absolute;
+left : 130px;
+top : 355px;
+}
+
+#contentInlog p a {
+text-decoration : none;
+}
+
+
+
+/* wasprogramma's */
+#profielfoto {
+position : absolute;
+top : 35px;
+}
+
+#gebruikersgegevens {
+position : absolute;
+left : 175px;
+top : 28px;
+}
+
+#gebruikersgegevens td {
+font-size : 15px;
+}
+
+#gebruikersgegevens .titel {
+font-size : 21px;
+}
+
+#recenteveilingen {
+position : absolute;
+top : 225px;
+}
+
+#recenteveilingen .titel {
+font-size : 21px;
+}
+
+#recenteveilingen td {
+text-align : center;
+}
+
+
+/* Loggegevens */
+#subrubriek1 {
+position : absolute;
+width : 930px;
+height : 200px;
+display : block;
+top : 20px;
+color : #000000;
+}
+
+#subrubriek2 {
+position : absolute;
+width : 930px;
+height : 200px;
+display : block;
+top : 240px;
+}
+
+#subrubriek3 {
+position : absolute;
+width : 930px;
+height : 200px;
+display : block;
+top : 460px;
+}
+
+#subrubriek4 {
+position : absolute;
+width : 930px;
+height : 200px;
+display : block;
+top : 680px;
+}
+
+#subrubriek5 {
+position : absolute;
+width : 930px;
+height : 200px;
+display : block;
+top : 900px;
+}
+
+.subtitel{
+position : relative;
+top : 50px;
+font-size : 25px;
+font-weight : bold;
+color : #000000;
+left : 25px;
+}
+
+#content .subrubriek:hover {
+background-color : #CCCCCC;
+}
+
+.subrubriek {
+background-color : #FFFFFF;
+}
+
+.subrubriek a {
+text-decoration : none;
+}
+
+.prijzen {
+text-align : center;
+color : #000000;
+}
+
+.artikel1 {
+position : relative;
+left : 250px;
+top : -75px;
+width : 275px;
+height : 185px;
+}
+
+.artikel2 {
+position : relative;
+left : 600px;
+top : -260px;
+width : 275px;
+height : 185px;
+}
+
+.artikel1:hover {
+background-color : #BBBBBB;
+}
+
+.artikel2:hover {
+background-color : #BBBBBB;
+}
+
+.artikelplaatje {
+position : relative;
+left : 85px;
+top : 5px;
+width : 100px;
+height : 100px;
+}
+
+#artikelrij1 {
+position : absolute;
+width : 960px;
+height : 200px;
+display : block;
+top : -1px;
+left : -30px;
+color : #000000;
+}
+
+.subrubriekartikel1 a {
+text-decoration : none;
+color : #000000;
+width : 150px;
+}
+
+.subrubriekartikel1 {
+position : relative;
+left : 25px;
+top : 10px;
+width : 200px;
+text-align : center;
+}
+
+.subrubriekartikel1 img {
+position : relative;
+left : 1px;
+}
+
+.subrubriekartikel2 a{
+text-decoration : none;
+color : #000000;
+}
+
+.subrubriekartikel2 {
+position : relative;
+left : 250px;
+top : -178px;
+width : 200px;
+text-align : center;
+}
+
+.subrubriekartikel2 img {
+position : relative;
+left : 1px;
+}
+
+
+
+
+
