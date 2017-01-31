@@ -53,8 +53,8 @@ OliWeb::OliWeb()
     configFileName=OLIWEB_CONFIG;
     configXml();
     openLogFile();
-    //mkfifo("/tmp/Wachmachine", 0666);
-    mknod("/tmp/Wachmachine", S_IFIFO|0666,0);
+    mkfifo("/tmp/Wachmachine", 0666);
+    //mknod("/tmp/Wachmachine", S_IFIFO|0666,0);
 }
 
 OliWeb::OliWeb(const string &config)
@@ -63,7 +63,7 @@ OliWeb::OliWeb(const string &config)
     configFileName=config;
     configXml();
     openLogFile();
-   // mkfifo("/tmp/Wachmachine", 0666);
+    mkfifo("/tmp/Wachmachine", 0666);
 }
 
 OliWeb::~OliWeb()
@@ -396,7 +396,7 @@ bool OliWeb::isWasProgrammas(const string &str)
 
 bool OliWeb::isToevoegen(const string &str)
 {
-	if (str.find("wasprogrammas.html?temp=") != string::npos) return true;
+	if (str.find("?temp=") != string::npos) return true;
 		return false;
 }
 
@@ -477,19 +477,16 @@ void OliWeb::threadRequestHandler(InboundRequest *request)
     	std::cout << "start ding" << std::endl;
     	startWProg(request);
     }
+    else if(isToevoegen(request->requestedFile))
+    {
+    	std::cout << "sending" << std::endl;
+    	sendNewWashProg(request);
+    }
     else if(request->requestedFile == "/wasprogrammas.html")
     {
     	std::cout << "normal" << std::endl;
 		request->requestedFile = rootFileDirectory + request->requestedFile;
 		fetchFileAndFifo(request);
-    }
-    else if(isToevoegen(request->requestedFile))
-    {
-    	std::cout << "sending" << std::endl;
-    	sendNewWashProg(request);
-//    	sleep(5);
-//    	request->requestedFile = rootFileDirectory + "/wasprogrammas.html";
-//    	fetchFileAndFifo(request);
     }
     else {
         request->requestedFile = rootFileDirectory + request->requestedFile;

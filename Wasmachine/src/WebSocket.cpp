@@ -41,7 +41,7 @@ void WebSocket::setProgres(const CurrentStatus &cs)
 void WebSocket::readFifo()
 {
 	char buff[256]{0};
-	std::cout << "reading" << std::endl;
+	//std::cout << "reading" << std::endl;
 	if(readerFifo == -1)
 	{
 		std::cout << "open" << std::endl;
@@ -89,7 +89,10 @@ void WebSocket::readFifo()
 			std::cout << "Start i:" << i << std::endl;
 			if(m_wps.size() >= i)
 			{
-				m_wbc.startWProg(m_wps[i]);
+				WasProgram wp = m_wps[i];
+				wp.RPM = calculateRPM(wp.RPM);
+				std::cout << "RPM: " << wp.RPM << std::endl;
+				m_wbc.startWProg(wp);
 			}
 		}
 	}
@@ -135,22 +138,27 @@ void WebSocket::main(void)
 			if(cs.phase == SPOELEN)			file << "Phase Spoelen. Time remaining: " << std::to_string(cs.timeRemaining / 60);
 			if(cs.phase == CENTRIFUGEREN)	file << "Phase Centrifugeren. Time remaining: " << std::to_string(cs.timeRemaining / 60);
 			file.close();
-			std::cout << "updating file" << std::endl;
+			std::cout << "time remaining" << cs.timeRemaining << std::endl;
 		}
 		else if(ev == m_wasProgramsFlag)
 		{
 			m_wps = m_wasProgramsPool.read();
 			writeWashingProgramsToFifo();
-			//if(m_wps.size() >= 1)
-			//{
-			//	m_wbc.startWProg(m_wps[0]);
-			//}
 		}
 		else if(ev == m_checkPipe)
 		{
 			readFifo();
 		}
 	}
+}
+
+uint8_t WebSocket::calculateRPM(const uint RPM)
+{
+	uint8_t calcRPM = 0.0885 * RPM - 77.714;
+	if(calcRPM > 64) return 64;
+	else if(calcRPM < 2) return 2;
+	else return calcRPM;
+
 }
 
 WebSocket::~WebSocket()

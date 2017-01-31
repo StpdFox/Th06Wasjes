@@ -26,8 +26,8 @@ PassiveIOHandler::PassiveIOHandler(const uint prio, UartComs &uc, WasProgUitvoer
     m_pump(DefaultOutput(5, 16, 32, uc)),
     m_motor(Motor(10, uc))
 {
-	if(m_uc.setRunning() == false) std::cerr << "Not running!" << std::endl;
-	else							std::cout << "running!" << std::endl;
+//	if(m_uc.setRunning() == false) std::cerr << "Not running!" << std::endl;
+//	else							std::cout << "running!" << std::endl;
 }
 
 void PassiveIOHandler::lockDoor()
@@ -100,15 +100,19 @@ void PassiveIOHandler::main(void)
 			if(m_uc.writeUart(2, 1) == 1)
 			{
 				m_wuh.setErrorFlag();
+				m_signalLed.on();
+				m_uc.setIdle();
 			}
 			else
 			{
+				m_uc.setRunning();
 				if(m_doorLock.on()) std::cout << "Door locked" << std::endl;
 				else				std::cerr << "Door not locked!" << std::endl;
 			}
 		}
 		else if(ev == m_doorUnlockFlag)
 		{
+			m_uc.setIdle();
 			if(m_doorLock.off()) std::cout << "Door unlocked" << std::endl;
 			else				std::cerr << "Door not unlocked!" << std::endl;
 		}

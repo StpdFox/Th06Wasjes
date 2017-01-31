@@ -1,5 +1,4 @@
 #include "TempSensor.h"
-#include <stdlib.h> //ToDo remove when rand() is removed
 
 TempSensor::TempSensor(const char reqByte, UartComs &uc) :
 	m_uc(uc),

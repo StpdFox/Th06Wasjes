@@ -38,6 +38,7 @@ private:
 
 	void readFifo();
 	void writeWashingProgramsToFifo();
+	uint8_t calculateRPM(const uint RPM);
 	void main(void);
 public:
 	WebSocket(const uint prio, WasProgUitvoerHandler &wpUC);

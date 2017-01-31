@@ -65,17 +65,17 @@ int UartComs::writeUart(const uint8_t command, const uint8_t value)
 	n = write(m_fd, &command, 1);
 	n = write(m_fd, &value, 1);
 	if(n == -1) return -1;
-	std::cout << "N: " << n << std::endl;
+	//std::cout << "N: " << n << std::endl;
 	sleep(0.01);
 
-	std::cout << "reading" << std::endl;
+	//std::cout << "reading" << std::endl;
 	char buf[256];
 	int byte = read(m_fd, (void*)buf, 255);
-	std::cout << "Byte: " << byte << std::endl;
+	//std::cout << "Byte: " << byte << std::endl;
 
 	if(n == -1) return -1;
 
-	std::cout << "responds: " << (int)buf[1] << std::endl;
+	//std::cout << "responds: " << (int)buf[1] << std::endl;
 	return (int)buf[1];
 }
 

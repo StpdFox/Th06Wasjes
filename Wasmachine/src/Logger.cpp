@@ -5,7 +5,6 @@
  *      Author: hendrik
  */
 
-#include <chrono>
 #include <iomanip>
 #include <ctime>
 #include <sstream>
@@ -17,19 +16,17 @@
 
 Logger::Logger(const uint prio) :
 	task(prio, "Logger"),
-	m_logChannel(this, "LogChannel")
+	m_logChannel(this, "LogChannel"),
+	m_fileName("Log")
 {
-	auto now = std::chrono::system_clock::now();
-	auto time =  std::chrono::system_clock::to_time_t(now);
-	std::stringstream ss;
-	//ss << std::put_time(std::localtime(&time), "%Y%m%d%H%M%S");
-	m_fileName = "LogFile" + ss.str();
+	std::ofstream ofs;
+	ofs.open(m_fileName, std::ofstream::out | std::ofstream::trunc);
+	ofs.close();
 }
 
 void Logger::write(const std::string &message)
 {
-	//TODO turn on to for logging
-	//m_logChannel.write(message);
+	m_logChannel.write(message);
 }
 
 void Logger::main(void)

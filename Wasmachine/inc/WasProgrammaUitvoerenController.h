@@ -25,6 +25,7 @@ private:
     bool m_heaterOn = false;
     bool m_waterValveOpen = false;
     bool m_pumpOn = false;
+    bool m_doorlock = false;
     uint8_t m_currentRPM = 0;
     
     bool m_perIOHandSuspend = true;

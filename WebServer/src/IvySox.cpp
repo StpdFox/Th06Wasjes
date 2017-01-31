@@ -554,14 +554,15 @@ size_t InboundConnection::sendWasprogrammas(const std::string fileName, const st
             unsigned token = site.find('$');
             std::string before = site.substr(0, token);
             ++token;
-            std::string after = site.substr(token);
+            uint size = site.size() - before.size() - 1;
+            std::string after = site.substr(token, size);
             std::string between = "<form>";
 
             uint idx = 0;
             uint number = 0;
             while(wasProgrammas[idx] != '?' && idx < wasProgrammas.size())
             {
-            	between += "<input type=\"radio\" name=\"wp\" value=" + std::to_string(number) + " checked=\"checked\"/>";
+            	between += "<input type=\"radio\" name=\"wp\" value=" + std::to_string(number) + "/>";
             	int start = idx;
             	int count = 0;
             	while(wasProgrammas[idx] != ',')
@@ -593,7 +594,7 @@ size_t InboundConnection::sendWasprogrammas(const std::string fileName, const st
 
             	between += "<br />";
             }
-            between += "<input type=\"button\" value=\"Start\" onClick=\"herhalendeFunctie();\">";
+            between += "<input type=\"submit\" value=\"Start\">";
             between += "</form>";
 
             std::string endString = before + between + after;

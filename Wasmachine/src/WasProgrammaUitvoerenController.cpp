@@ -32,6 +32,12 @@ void WasProgrammaUitvoerenController::timeOver()
 
 void WasProgrammaUitvoerenController::clearPhase()
 {
+	if(m_heaterOn)
+	{
+		m_pasIOHandler.heaterOff();
+		m_heaterOn = false;
+	}
+
 	if(m_currentRPM != 0)
 	{
 		m_pasIOHandler.setMotoRPM(0);
@@ -60,7 +66,7 @@ void WasProgrammaUitvoerenController::clearPhase()
 void WasProgrammaUitvoerenController::checkWasMachine()
 {
 //	return;
-	if(m_lastPhase != m_currentPhase.phase)
+	if(m_lastPhase != m_currentPhase.phase && m_currentPhase.phase != NONE)
 	{
 		if(m_perIOHandSuspend)
 		{
@@ -72,94 +78,72 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 	else {
 		if(m_currentPhase.phase == NONE)
 		{
-			//m_logger.write("Phase if NONE");
+			std::cout << "NONE" << std::endl;
+
+			m_logger.write("Phase is NONE");
 			if(!m_perIOHandSuspend)
 			{
 				m_perIOHandler.suspend();
 				m_perIOHandSuspend = true;
 			}
 
-			if(m_heaterOn) m_pasIOHandler.heaterOff();
-			if(m_waterValveOpen) m_pasIOHandler.closeWaterValve();
-			if(m_currentRPM) m_pasIOHandler.setMotoRPM(0);
+			if(m_heaterOn)
+			{
+				m_pasIOHandler.heaterOff();
+				m_heaterOn = false;
+			}
+			if(m_waterValveOpen)
+			{
+				m_pasIOHandler.closeWaterValve();
+				m_waterValveOpen = false;
+			}
+			if(m_currentRPM)
+			{
+				m_pasIOHandler.setMotoRPM(0);
+				m_currentRPM = 0;
+			}
+			if(m_doorlock)
+			{
+				m_pasIOHandler.unlockDoor();
+				m_doorlock = false;
+				std::cout << "set unlock" << std::endl;
+			}
 		}
 		else if(m_currentPhase.phase == SPOELEN)
 		{
 			m_currentRPM = 1;
-			//m_logger.write("Phase if SPOELEN");
-			if(m_perIOHandSuspend)
+			m_logger.write("Phase is SPOELEN");
+			if(!m_doorlock)
 			{
-				m_perIOHandler.resume();
-				m_perIOHandSuspend = false;
-			}
-
-			if(m_wLevel < m_targetWLevel)
-			{
-				if(!m_waterValveOpen)
-				{
-					m_pasIOHandler.openWaterValve();
-					m_waterValveOpen = true;
-				}
+				m_pasIOHandler.lockDoor();
+				m_doorlock = true;
 			}
 			else
 			{
-				if(m_waterValveOpen)
+
+				if(m_perIOHandSuspend)
 				{
-				   m_pasIOHandler.closeWaterValve();
-					m_waterValveOpen = false;
+					m_perIOHandler.resume();
+					m_perIOHandSuspend = false;
 				}
 
-				if(m_changeMoter)
+				if(m_wLevel < m_targetWLevel)
 				{
-				   if(m_spinLeft) 	m_pasIOHandler.setMotoRPM(m_currentRPM);
-				   else				m_pasIOHandler.setMotoRPM(m_currentRPM + 128);
-				   m_changeMoter = false;
-				   m_wPUH.setWCUTimer(5 S);
-				}
-			}
-		}
-		else if(m_currentPhase.phase == WASSEN)
-		{
-			m_currentRPM = 1;
-			//m_logger.write("Phase if WASSEN");
-			if(m_perIOHandSuspend)
-			{
-				m_perIOHandler.resume();
-				m_perIOHandSuspend = false;
-			}
-
-			if(m_wLevel < m_targetWLevel)
-			{
-				if(!m_waterValveOpen)
-				{
-					m_pasIOHandler.openWaterValve();
-					m_waterValveOpen = true;
-				}
-			}
-			else
-			{
-				if(m_waterValveOpen)
-				{
-				   m_pasIOHandler.closeWaterValve();
-					m_waterValveOpen = false;
-				}
-
-				if(m_currentTemp < m_currentPhase.temp)
-				{
-					if(!m_heaterOn)
+					if(!m_waterValveOpen)
 					{
-						m_pasIOHandler.heaterOn();
-						m_heaterOn = true;
+						m_pasIOHandler.openWaterValve();
+						m_waterValveOpen = true;
 					}
 				}
 				else
 				{
-					if(m_heaterOn)
+					if(m_waterValveOpen)
 					{
-						m_pasIOHandler.heaterOff();
-						m_heaterOn = false;
+					   m_pasIOHandler.closeWaterValve();
+						m_waterValveOpen = false;
 					}
-					else if(m_changeMoter)
+
+					if(m_changeMoter)
 					{
 					   if(m_spinLeft) 	m_pasIOHandler.setMotoRPM(m_currentRPM);
 					   else				m_pasIOHandler.setMotoRPM(m_currentRPM + 128);
@@ -168,35 +152,101 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 					}
 				}
 			}
-
 		}
-		else if((m_currentPhase.phase = CENTRIFUGEREN))
+		else if(m_currentPhase.phase == WASSEN)
 		{
-			//m_logger.write("Phase if CENTRIFUGEREN");
-			m_currentRPM = m_currentPhase.RPM;
-
-			if(m_changeMoter)
+			m_currentRPM = 1;
+			m_logger.write("Phase is WASSEN");
+			if(m_perIOHandSuspend)
 			{
-			   if(m_spinLeft) 	m_pasIOHandler.setMotoRPM(m_currentRPM);
-			   else				m_pasIOHandler.setMotoRPM(m_currentRPM * -1);
-			   m_changeMoter = false;
-			   m_wPUH.setWCUTimer(5 S);
+				m_perIOHandler.resume();
+				m_perIOHandSuspend = false;
 			}
 
-			if(m_wLevel > 0)
+			if(!m_doorlock)
 			{
-				if(!m_pumpOn)
-				{
-					m_pasIOHandler.pumpOn();
-					m_pumpOn = true;
-				}
+				m_pasIOHandler.lockDoor();
+				m_doorlock = true;
 			}
 			else
 			{
-				if(m_pumpOn)
+				if(m_wLevel < m_targetWLevel)
 				{
-					m_pasIOHandler.pumpOff();
-					m_pumpOn = false;
+					if(!m_waterValveOpen)
+					{
+						m_pasIOHandler.openWaterValve();
+						m_waterValveOpen = true;
+					}
+				}
+				else
+				{
+					if(m_waterValveOpen)
+					{
+					   m_pasIOHandler.closeWaterValve();
+						m_waterValveOpen = false;
+					}
+
+					if(m_currentTemp < m_currentPhase.temp)
+					{
+						if(!m_heaterOn)
+						{
+							m_pasIOHandler.heaterOn();
+							m_heaterOn = true;
+						}
+					}
+					else
+					{
+						if(m_heaterOn)
+						{
+							m_pasIOHandler.heaterOff();
+							m_heaterOn = false;
+						}
+						else if(m_changeMoter)
+						{
+						   if(m_spinLeft) 	m_pasIOHandler.setMotoRPM(m_currentRPM);
+						   else				m_pasIOHandler.setMotoRPM(m_currentRPM + 128);
+						   m_changeMoter = false;
+						   m_wPUH.setWCUTimer(5 S);
+						}
+					}
+				}
+			}
+		}
+		else if((m_currentPhase.phase = CENTRIFUGEREN))
+		{
+			m_logger.write("Phase is CENTRIFUGEREN");
+			m_currentRPM = m_currentPhase.RPM;
+
+			if(!m_doorlock)
+			{
+				m_pasIOHandler.lockDoor();
+				m_doorlock = true;
+			}
+			else
+			{
+				if(m_changeMoter)
+				{
+				   if(m_spinLeft) 	m_pasIOHandler.setMotoRPM(m_currentRPM);
+				   else				m_pasIOHandler.setMotoRPM(m_currentRPM * -1);
+				   m_changeMoter = false;
+				   m_wPUH.setWCUTimer(5 S);
+				}
+
+				if(m_wLevel > 0)
+				{
+					if(!m_pumpOn)
+					{
+						m_pasIOHandler.pumpOn();
+						m_pumpOn = true;
+					}
+				}
+				else
+				{
+					if(m_pumpOn)
+					{
+						m_pasIOHandler.pumpOff();
+						m_pumpOn = false;
+					}
 				}
 			}
 		}
