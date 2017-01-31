@@ -1,0 +1,30 @@
+Use case naam	Wasprogramma Uitvoeren
+Doel	Actor User naar een wasprogramma uit laten kiezen en uitvoeren.
+Pre-condities	Alle hardware onderdelen zijn functioneel(?)
+Post-condities	De was is gewassen en de deur is ontgrendeld.
+Uitzonderingen	Als de deur niet vergrendeld kan worden het wasprogramma niet uitvoeren.
+
+
+Use case naam	Wasprogramma Beheren
+Doel	Actor User een nieuw wasprogramma laten creeren of een bestaand wasprogramma aanpassen
+Pre-condities	Verbindin met de websocket
+Post-condities	Een wasprogramma is aangepast of aangemaakt en vervolgens opgeslagen.
+Uitzonderingen	Bij het wegvallen van de verbinding zal het programma een melding geven. 
+
+Als het aanpassen niet voltooid word zal het programma de aanpassingen of het nieuwe wasprogramma niet opslaan.
+
+
+Use case naam	Status Tonen
+Doel	Actor User naar een weergave van de status van de wasmachine brengen.
+Pre-condities	Er is verbinding met de wasmachine
+Post-condities	Weergave van de huidige was-status van de wasmachine.
+Uitzonderingen	Als er geen contact gemaakt kan worden met de wasmachine zal de status dit weergeven.
+
+
+Use case naam	Log Updaten
+Doel	De vooruitgang van een wasprogramma opslaan.
+Pre-condities	Er word een wasprogramma uitgevoerd
+Post-condities	Het wasprogramma is afgerond en elke fase is opgeslagen in de log
+Uitzonderingen	
+
+
