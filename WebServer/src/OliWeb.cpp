@@ -381,6 +381,7 @@ bool OliWeb::isPython(const string &str)
         return true;
     return false;
 }
+
 bool OliWeb::isWasProgrammas(const string &str)
 {
     if (str.find("wasprogrammas.html?wp=") != string::npos) return true;

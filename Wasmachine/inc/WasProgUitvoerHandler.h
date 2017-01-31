@@ -25,6 +25,7 @@ private:
     
     RTOS::flag m_newValueFlag;
     RTOS::flag m_newPhaseFlag;
+    RTOS::flag m_passiveErrorFlag;
     RTOS::pool<uint> m_tempPool;
     RTOS::pool<uint> m_wLvlPool;
     RTOS::pool<WasProgramPhase> m_wasPhase;
@@ -43,6 +44,7 @@ public:
     void updateWLevel(WaterLevelSensor *lvl);
     void setWProgPhase(const WasProgramPhase &wPhase);
     void setWCUTimer(const uint time);
+    void setErrorFlag();
 };
 
 #endif

@@ -8,6 +8,7 @@ WasProgUitvoerHandler::WasProgUitvoerHandler(const uint prio, TempSensor &tempSe
     m_wUC(*this, perHandler, uc),
     m_newValueFlag(this, "NewValueFlag"),
 	m_newPhaseFlag(this, "newPhaseFlag"),
+	m_passiveErrorFlag(this, "ErrorFlag"),
     m_tempPool("TempPool"),
     m_wLvlPool("WlvlPool"),
     m_wasPhase("WasPhase"),
@@ -48,7 +49,7 @@ void WasProgUitvoerHandler::main(void)
     	m_wUC.checkWasMachine();
     	while(true)
     	{
-    		RTOS::event ev = wait(m_newValueFlag + m_newPhaseFlag + m_wCUTimer);
+    		RTOS::event ev = wait(m_newValueFlag + m_newPhaseFlag + m_wCUTimer + m_passiveErrorFlag);
     		if(ev == m_newValueFlag)
     		{
     	    	m_temp = m_tempPool.read();
@@ -71,8 +72,17 @@ void WasProgUitvoerHandler::main(void)
     		{
     			m_wUC.timeOver();
     		}
+    		else if(ev == m_passiveErrorFlag)
+    		{
+    			m_wUC.error();
+    		}
     	}
     }
+}
+
+void WasProgUitvoerHandler::setErrorFlag()
+{
+	m_passiveErrorFlag.set();
 }
 
 WasProgUitvoerHandler::~WasProgUitvoerHandler()

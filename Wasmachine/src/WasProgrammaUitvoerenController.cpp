@@ -4,7 +4,7 @@
 WasProgrammaUitvoerenController::WasProgrammaUitvoerenController(WasProgUitvoerHandler &wPUH, PeriodiekeIOHandler &perIOHandler, UartComs &uc):
     m_wPUH(wPUH),
 	m_perIOHandler(perIOHandler),
-	m_pasIOHandler(2, uc),
+	m_pasIOHandler(2, uc, wPUH),
 	m_logger(5)
 {}
 
@@ -202,3 +202,23 @@ void WasProgrammaUitvoerenController::checkWasMachine()
 		}
 	}
 }
+
+void WasProgrammaUitvoerenController::error()
+{
+	m_currentPhase.phase = NONE;
+	checkWasMachine();
+	m_logger.write("Door not closed!");
+	std::cout << "error!" << std::endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+

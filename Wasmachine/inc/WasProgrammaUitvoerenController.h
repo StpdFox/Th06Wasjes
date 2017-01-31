@@ -43,6 +43,7 @@ public:
     void setNewWLvl(const uint);
     void timeOver();
     void checkWasMachine();
+    void error();
 };
 
 #endif

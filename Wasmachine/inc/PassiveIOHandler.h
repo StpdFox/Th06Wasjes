@@ -6,10 +6,13 @@
 #include "Motor.h"
 #include "UartComs.h"
 
+class WasProgUitvoerHandler;
+
 class PassiveIOHandler : public RTOS::task
 {
 private:
 	UartComs &m_uc;
+	WasProgUitvoerHandler &m_wuh;
 
     RTOS::flag m_doorLockFlag;
     RTOS::flag m_doorUnlockFlag;
@@ -33,7 +36,7 @@ private:
     
     void main(void);
 public:
-    PassiveIOHandler(const uint prio, UartComs &uc);
+    PassiveIOHandler(const uint prio, UartComs &uc, WasProgUitvoerHandler &wuh);
     virtual ~PassiveIOHandler();
 
     void lockDoor();

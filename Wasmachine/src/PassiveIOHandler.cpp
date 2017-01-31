@@ -1,10 +1,12 @@
 #include <iostream>
 #include "PassiveIOHandler.h"
+#include "WasProgUitvoerHandler.h"
 #include <fcntl.h>
 
-PassiveIOHandler::PassiveIOHandler(const uint prio, UartComs &uc) :
+PassiveIOHandler::PassiveIOHandler(const uint prio, UartComs &uc, WasProgUitvoerHandler &wuh) :
     task(prio, "PassIOHandler"),
 	m_uc(uc),
+	m_wuh(wuh),
     m_doorLockFlag(this, "DoorLockFlag"),
     m_doorUnlockFlag(this, "DoorUnLockFlag"),
     m_heaterOnFlag(this, "HeaterOnFlag"),
@@ -95,8 +97,15 @@ void PassiveIOHandler::main(void)
 
 		if(ev == m_doorLockFlag)
 		{
-			if(m_doorLock.on()) std::cout << "Door locked" << std::endl;
-			else				std::cerr << "Door not locked!" << std::endl;
+			if(m_uc.writeUart(2, 1) == 1)
+			{
+				m_wuh.setErrorFlag();
+			}
+			else
+			{
+				if(m_doorLock.on()) std::cout << "Door locked" << std::endl;
+				else				std::cerr << "Door not locked!" << std::endl;
+			}
 		}
 		else if(ev == m_doorUnlockFlag)
 		{
